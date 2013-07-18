@@ -15,14 +15,15 @@
 
 		this.changeGameState = function(newState){
 			this.gameState = newState;
+			console.log("Game State: " + newState);
 			this.setMessage("");
 			this.coq.entities.clear();
 			switch(this.gameState){
 				case "start screen":
-					game.setMessage("Welcome to Space Explore");
+					game.setMessage("Welcome to Space Adventure");
 					game.appendMessage("Use the number keys (1-8) to choose options.");
 					game.appendMessage("You can start a new game [1], or continue a saved game [2], if you have one.");
-					this.coq.entities.create(GameScreen, {"game": this, "screen": "start screen", "HUD":[
+					this.coq.entities.create(GameScreen, {"screen": "start screen", "HUD":[
 						{
 							"key": 1,
 							"keyword": "ONE",
@@ -42,9 +43,24 @@
 							"enabled": false
 						}
 					]});
+					this.coq.entities.create(GameAnimation, {
+						"animation": new AnimationWarp({
+							"keyFrames": [0, 120, 240, 250, 390, 1200]
+						}),
+						"callback": function(){
+							for(var i = 0; i < this.animation.stars.length; i++){
+								this.animation.stars[i].x -= this.animation.stretch;
+								if(this.animation.stars[i].x < 0){
+									this.animation.stars[i].x = (Math.random() * (this.animation.stretch + 500)) + 800;
+								}
+							}
+							this.frame = 0;
+							this.scene = 0;
+						}
+					});
 					break;
 				case "choose character":
-					this.coq.entities.create(GameScreen, {"game": this, "screen": "choose character", "HUD":[
+					this.coq.entities.create(GameScreen, {"screen": "choose character", "HUD":[
 						{
 							"key": 1,
 							"keyword": "ONE",
@@ -91,6 +107,8 @@
 								armorWeights[0].isSelected = true;
 								chooseCharacter.chosenArmorWeight = armorWeights[0];
 
+								chooseCharacter.updateMessage();
+
 							}.bind(this),
 							"text": "Randomize",
 							"enabled": true
@@ -103,7 +121,7 @@
 								this.setMessage("Welcome to Space, adventurer!");
 								this.appendMessage("You find yourself adrift in the Corellis arm of the galaxy, one million credits in debt.");
 								this.appendMessage("Find your way around the Galaxy and earn your freedom!");
-								this.appendMessage("Fortunately, you have your trusty spaceship, <span class='orion'>The Orion</span>");
+								this.appendMessage("Fortunately, you have your trusty spaceship, <span class='orion'>The Orion</span>.");
 								this.appendMessage("Use the arrow keys to move, and the number keys to select options.");
 								this.appendMessage("May fortune smile upon you, adventurer!");
 							}.bind(this),
@@ -134,14 +152,35 @@
 					]});
 					break;
 				case "space ship":
-					this.coq.entities.create(GameScreen, {"game": this, "screen": "space ship", "HUD": [
+					this.coq.entities.create(GameScreen, {"screen": "space ship", "HUD": [
 						{
 							"key": 8,
 							"keyword": "EIGHT",
 							"action": function(){
-								this.changeGameState('start screen')
+								this.changeGameState('start screen');
 							}.bind(this),
 							"text": "Save/Quit",
+							"enabled": true
+						}
+					]});
+					break;
+				case "adventure animation":
+					this.coq.entities.create(GameAnimation, {
+						"animation": new AnimationWarp({}),
+						"callback": function(){
+							this.changeGameState('space ship');
+						}.bind(this)
+					});
+					break;
+				case "star map":
+					this.coq.entities.create(GameScreen, {"screen": "star map", "HUD": [
+						{
+							"key": 8,
+							"keyword": "EIGHT",
+							"action": function(){
+								this.changeGameState('space ship');
+							}.bind(this),
+							"text": "Back",
 							"enabled": true
 						}
 					]});

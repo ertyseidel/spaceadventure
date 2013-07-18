@@ -7,12 +7,12 @@
 
 		this.zindex = -100;
 
-		this.lastStar = new Star(100, 100, 3, 1, null, null);
-		this.firstStar = new Star(100, 300, 3, 1, null, this.lastStar);
+		this.lastStar = new Star(100, 100, 3, 0.1, null, null);
+		this.firstStar = new Star(100, 300, 3, 0.1, null, this.lastStar);
 		this.lastStar.prev = this.firstStar;
 		this.numberOfStars = 0;
 		while(this.numberOfStars < this.maxStars){
-			this.lastStar = new Star(Math.random() * 800, Math.random() * 600, (Math.random() * 3) + 1, (Math.random() * this.starSpeed) + 1, this.lastStar, null);
+			this.lastStar = new Star(Math.random() * 800, Math.random() * 600, (Math.random() * 3) + 1, (Math.random() * this.starSpeed) + 0.1, this.lastStar, null);
 			this.lastStar.prev.next = this.lastStar;
 			this.numberOfStars ++;
 		}
@@ -107,6 +107,21 @@
 			"size": {"x": 25, "y": 100}
 		});
 
+		_en.create(GameBoundingBox, { //disembark left
+			"pos": {"x": 350, "y": 250},
+			"size": {"x": 25, "y": 125}
+		});
+
+		_en.create(GameBoundingBox, { //disembark bottom
+			"pos": {"x": 375, "y": 350},
+			"size": {"x": 50, "y": 25}
+		});
+
+		_en.create(GameBoundingBox, { //disembark right
+			"pos": {"x": 425, "y": 250},
+			"size": {"x": 25, "y": 125}
+		});
+
 		_en.create(GameOptionBox, {
 			"pos": {"x": 305, "y": 455},
 			"size": {"x": 190, "y": 40},
@@ -155,6 +170,35 @@
 				{
 					"key": 1,
 					"keyword": "ONE",
+					"text": "Weapons",
+					"action": function(){
+						console.log("yeah!");
+					}.bind(this),
+					"enabled": true
+				},
+				{
+					"key": 2,
+					"keyword": "TWO",
+					"text": "Reload",
+					"action": function(){
+						console.log("yeah!");
+					}.bind(this),
+					"enabled": true
+				}
+			],
+			"message": [
+				"You enter your armory. Various racks and shelves hide away your weaponry.",
+				"Here, you can exchange your weapons [1] and refresh your ammunition [2]."
+			]
+		});
+
+		_en.create(GameOptionBox, {
+			"pos": {"x": 380, "y": 305},
+			"size": {"x": 40, "y": 40},
+			"HUD": [
+				{
+					"key": 1,
+					"keyword": "ONE",
 					"text": "Disembark",
 					"action": function(){
 						console.log("yeah!");
@@ -163,7 +207,7 @@
 				}
 			],
 			"message": [
-				"If you're on a planet, station, or debris field, this is where you can disembark <span class='orion'>The Orion</span> and search for adventure."
+				"If you're on a planet, station, or debris field, this is where you can disembark <span class='orion'>The Orion</span> and search for adventure [1]."
 			]
 		});
 
@@ -176,7 +220,8 @@
 					"keyword": "ONE",
 					"text": "Adventure",
 					"action": function(){
-						console.log("yeah!");
+						_.changeGameState('adventure animation');
+						_.setMessage("The hyperdrives spin up, and you find yourself speeding through the stars!");
 					}.bind(this),
 					"enabled": true
 				},
@@ -185,15 +230,15 @@
 					"keyword": "TWO",
 					"text": "StarMap",
 					"action": function(){
-						console.log("yeah!");
+						_.changeGameState('star map');
 					}.bind(this),
 					"enabled": true
 				}
 			],
 			"message": [
-				"You enter the bridge of <span class='orion'>The Orion</span>",
+				"You enter the bridge of <span class='orion'>The Orion</span>.",
 				"From here, you can spend fuel in an attempt to find uncharted planets [1].",
-				"Or you can view the star map, to visit a planet you've already discovered [2]"
+				"Or you can view the star map, to visit a planet you've already discovered [2]."
 			]
 		});
 
@@ -249,14 +294,27 @@
 			"locked": false
 		});
 
+		_en.create(GameDoor, {
+			"sensor":{
+				"pos": {"x": 375, "y": 250},
+				"size": {"x": 50, "y": 75}
+			},
+			"door": {
+				"pos": {"x": 375, "y": 275},
+				"size": {"x": 50, "y": 25}
+			},
+			"orientation": "horizontal",
+			"locked": false
+		});
+
 		_en.create(GamePlayer,{
-			"pos": {"x": 400 - 13, "y": 225},
+			"pos": {"x": 400 - 13, "y": 215},
 			"size": {"x": 25, "y": 25}
 		});
 
 		this.update = function(){
 			while(this.numberOfStars < this.maxStars){
-				this.lastStar = new Star(Math.random() * 800, 0, (Math.random() * 3) + 1, (Math.random() * this.starSpeed) + 1, this.lastStar, null);
+				this.lastStar = new Star(Math.random() * 800, 0, (Math.random() * 3) + 1, (Math.random() * this.starSpeed) + 0.1, this.lastStar, null);
 				this.lastStar.prev.next = this.lastStar;
 				this.numberOfStars ++;
 			}
@@ -279,26 +337,29 @@
 			//starField
 			ctx.strokeStyle = "#cccccc";
 			var starIter = this.firstStar;
+			ctx.beginPath();
 			while(starIter !== null){
-				ctx.beginPath();
 				ctx.moveTo(starIter.x, starIter.y);
 				ctx.lineTo(starIter.x + starIter.size, starIter.y + starIter.size);
 				ctx.moveTo(starIter.x + starIter.size, starIter.y);
 				ctx.lineTo(starIter.x, starIter.y + starIter.size);
-				ctx.stroke();
 				starIter = starIter.next;
 			}
+			ctx.stroke();
 			var strokeStyle = "#0000ff";
 			var fillStyle = "#000000";
 			//outside
 			drawPath(ctx, pointsOutside, strokeStyle, fillStyle);
 			//inside
 			drawPath(ctx, pointsInside, strokeStyle);
+			//ramp
+			drawPath(ctx, pointsInsideInside, strokeStyle);
 		};
 	};
 
 	var drawPath = function(ctx, arr, stroke, fill){
 		ctx.strokeStyle = stroke;
+		ctx.beginPath();
 		if(fill !== undefined) ctx.fillStyle = fill;
 		ctx.moveTo(arr[0][0], arr[0][1]);
 		for(var i = 1; i < arr.length; i++){
@@ -306,7 +367,7 @@
 		}
 		ctx.stroke();
 		if(fill !== undefined) ctx.fill();
-	}
+	};
 
 	var Star = function(x, y, size, speed, prev, next){
 		this.x = x;
@@ -371,6 +432,18 @@
 		[375, 150], //bridge door left
 		[325, 150], //bridge rear right
 		[325, 75] //bridge left wall
+	];
+
+	var pointsInsideInside = [
+		[350, 250], //start
+		[375, 250], //top left
+		[375, 350], //left inner
+		[425, 350], //back inner
+		[425, 250], //right inner
+		[450, 250], //top right
+		[450, 375], //right outer
+		[350, 375], //back outer
+		[350, 250] //left outer
 	];
 
 	exports.GameSpaceShip = GameSpaceShip;

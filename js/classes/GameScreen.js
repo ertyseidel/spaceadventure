@@ -2,7 +2,6 @@
 	var GameScreen = function(_, settings){
 		this.noCollision = true;
 		var _en = _.coq.entities;
-		var _in = _.coq.inputter;
 
 		switch(settings.screen){
 			case "start screen":
@@ -12,7 +11,7 @@
 				_en.create(GameChooseCharacter, {});
 				break;
 			case "space ship":
-				_en.create(GameSpaceShip, {"maxStars": 100, "starSpeed": 3});
+				_en.create(GameSpaceShip, {"maxStars": 100, "starSpeed": 0.1});
 				break;
 		}
 

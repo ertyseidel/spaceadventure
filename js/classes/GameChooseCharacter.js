@@ -27,7 +27,7 @@
 			"type": "attribute",
 			"name": "strong",
 			"description": "Strong characters use brute force to accomplish a task."
-		}, function(e){this.choices[0][0] = e; this.updateChoiceHover(e);}.bind(this));
+		}, function(e){this.choices[0][0] = e; this.updateMessage();}.bind(this));
 
 		_en.create(GameText,{
 			"text": "Fast",
@@ -116,7 +116,7 @@
 		});
 
 		_en.create(GameText,{
-			"text": "Fisticufffs",
+			"text": "Fisticuffs",
 			"x": 50,
 			"y": 225,
 			"type": "combat style",
@@ -203,6 +203,9 @@
 
 		this.updateChoiceHover = function(hover){
 			this.getHover().isHovered = hover;
+		};
+
+		this.updateMessage = function(){
 			_.setMessage(this.getHover().description);
 			if(this.chosenAttributes.length === 0){
 				_.appendMessage("You need to select two more attributes/skills", "#0000ff");
@@ -266,27 +269,32 @@
 				this.updateChoiceHover(false);
 				this.choicesX ++;
 				this.updateChoiceHover(true);
+				this.updateMessage();
 			}
 			if(_in.changes(_in.LEFT_ARROW)){
 				this.updateChoiceHover(false);
 				this.choicesX += this.choices[this.choicesY % this.choices.length].length - 1;
 				this.updateChoiceHover(true);
+				this.updateMessage();
 			}
 			if(_in.changes(_in.UP_ARROW)){
 				this.updateChoiceHover(false);
 				this.choicesX %= this.choices[this.choicesY % this.choices.length].length;
 				this.choicesY += this.choices.length - 1;
 				this.updateChoiceHover(true);
+				this.updateMessage();
 			}
 			if(_in.changes(_in.DOWN_ARROW)){
 				this.updateChoiceHover(false);
 				this.choicesX %= this.choices[this.choicesY % this.choices.length].length;
 				this.choicesY ++;
 				this.updateChoiceHover(true);
+				this.updateMessage();
 			}
 			if(_in.changes(_in.ONE)){
 				this.makeSelection();
 				this.updateChoiceHover(true);
+				this.updateMessage();
 			}
 		};
 	};

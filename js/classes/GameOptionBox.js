@@ -10,12 +10,14 @@
 
 		this.collision = function(other){
 			if(other instanceof GamePlayer){
-				this.enabled = true;
-				if(this.message !== undefined){
+				if(this.message !== undefined && this.enabled === false){
+					this.enabled = true;
 					_.setMessage(this.message[0]);
 					for(var j = 1; j < this.message.length; j++){
 						_.appendMessage(this.message[j]);
 					}
+				} else if(this.enabled === false){
+					this.enabled = true;
 				}
 			}
 		};
@@ -39,7 +41,7 @@
 				}
 			}
 		};
-		this.draw = function(ctx){/*
+		this.draw = function(ctx){
 			ctx.strokeStyle = this.enabled ? "#0000ff" : "gray";
 			ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
 			ctx.beginPath();
@@ -48,7 +50,7 @@
 			ctx.moveTo(this.pos.x + this.size.x, this.pos.y);
 			ctx.lineTo(this.pos.x, this.pos.y + this.size.y);
 			ctx.stroke();
-		*/};
+		};
 	};
 
 	exports.GameOptionBox = GameOptionBox;
