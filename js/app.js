@@ -1,5 +1,5 @@
 window.addEventListener('load', function() {
 	game = new Game("canvas", "text", 800, 600);
 	game.changeGameState("start screen");
-	//game.changeGameState("space ship");
+	//game.changeGameState("planet test");
 });

@@ -1,6 +1,6 @@
 ;(function(exports){
-	var GameBoundingBox = function(_, settings){
-		this.BoundingBox = _.coq.collider.RECTANGLE;
+	var GameCollisionBox = function(_, settings){
+		this.CollisionBox = _.coq.collider.RECTANGLE;
 		this.collided = false;
 		var defaults = {
 			"pos": {"x": 0, "y": 0},
@@ -11,13 +11,15 @@
 			this[i] = typeof(settings[i]) == "undefined" ? defaults[i] : settings[i];
 		}
 		this.draw = function(ctx){
-		//	ctx.strokeStyle = this.color;
-		//		ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
-			if(this.collided){
+			if(_.debugMode){
+				ctx.strokeStyle = this.color;
+				ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
+			}
+			if(_.debugMode && this.collided){
 				ctx.fillStyle = this.color;
 				ctx.fillRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
 			}
 		};
 	};
-	exports.GameBoundingBox = GameBoundingBox;
+	exports.GameCollisionBox = GameCollisionBox;
 })(this);

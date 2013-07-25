@@ -42,14 +42,16 @@
 			}
 		};
 		this.draw = function(ctx){
-			ctx.strokeStyle = this.enabled ? "#0000ff" : "gray";
-			ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
-			ctx.beginPath();
-			ctx.moveTo(this.pos.x, this.pos.y);
-			ctx.lineTo(this.pos.x + this.size.x, this.pos.y + this.size.y);
-			ctx.moveTo(this.pos.x + this.size.x, this.pos.y);
-			ctx.lineTo(this.pos.x, this.pos.y + this.size.y);
-			ctx.stroke();
+			if(_.debugMode){
+				ctx.strokeStyle = this.enabled ? "#0000ff" : "gray";
+				ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
+				ctx.beginPath();
+				ctx.moveTo(this.pos.x, this.pos.y);
+				ctx.lineTo(this.pos.x + this.size.x, this.pos.y + this.size.y);
+				ctx.moveTo(this.pos.x + this.size.x, this.pos.y);
+				ctx.lineTo(this.pos.x, this.pos.y + this.size.y);
+				ctx.stroke();
+			}
 		};
 	};
 

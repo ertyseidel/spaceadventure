@@ -2,6 +2,7 @@
 	var Game = function(canvasId, textId, width, height) {
 		this.coq = new Coquette(this, canvasId, width, height, "#000");
 		this.gameState = null;
+		this.debugMode = false;
 
 		this.setMessage = function(msg, col){
 			var color = col || "#ffffff";
@@ -45,7 +46,7 @@
 					]});
 					this.coq.entities.create(GameAnimation, {
 						"animation": new AnimationWarp({
-							"keyFrames": [0, 120, 240, 250, 390, 1200]
+							"keyFrames": [0, 1120, 1240, 1250, 1390, 2200]
 						}),
 						"callback": function(){
 							for(var i = 0; i < this.animation.stars.length; i++){
@@ -152,17 +153,21 @@
 					]});
 					break;
 				case "space ship":
-					this.coq.entities.create(GameScreen, {"screen": "space ship", "HUD": [
-						{
-							"key": 8,
-							"keyword": "EIGHT",
-							"action": function(){
-								this.changeGameState('start screen');
-							}.bind(this),
-							"text": "Save/Quit",
-							"enabled": true
-						}
-					]});
+					this.coq.entities.create(GameScreen, {
+						"screen": "space ship",
+						"HUD": [
+							{
+								"key": 8,
+								"keyword": "EIGHT",
+								"action": function(){
+									this.changeGameState('start screen');
+								}.bind(this),
+								"text": "Save/Quit",
+								"enabled": true
+							}
+						],
+						"player": true
+					});
 					break;
 				case "adventure animation":
 					this.coq.entities.create(GameAnimation, {
@@ -185,6 +190,21 @@
 						}
 					]});
 					break;
+				case "planet test":
+					this.coq.entities.create(GameScreen, {
+						"screen": "planet test",
+						"HUD": [
+							{
+								"key": 8,
+								"keyword": "EIGHT",
+								"action": function(){
+									this.changeGameState('space ship');
+								}.bind(this),
+								"text": "Back",
+								"enabled": true
+							}
+						],
+						"player": true});
 				default:
 					break;
 			}
@@ -194,6 +214,9 @@
 			if(this.coq.inputter.changes(this.coq.inputter.P)){
 				this.changeGameState("");
 				this.coq.ticker.stop = true;
+			}
+			if(this.coq.inputter.changes(this.coq.inputter.D)){
+				this.debugMode = ! this.debugMode;
 			}
 		};
 	};

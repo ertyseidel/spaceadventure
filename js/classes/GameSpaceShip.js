@@ -7,120 +7,34 @@
 
 		this.zindex = -100;
 
-		this.lastStar = new Star(100, 100, 3, 0.1, null, null);
-		this.firstStar = new Star(100, 300, 3, 0.1, null, this.lastStar);
-		this.lastStar.prev = this.firstStar;
-		this.numberOfStars = 0;
-		while(this.numberOfStars < this.maxStars){
-			this.lastStar = new Star(Math.random() * 800, Math.random() * 600, (Math.random() * 3) + 1, (Math.random() * this.starSpeed) + 0.1, this.lastStar, null);
-			this.lastStar.prev.next = this.lastStar;
-			this.numberOfStars ++;
+		this.stars = []
+		for(var s = 0; s < this.maxStars; s++){
+			this.stars.push(new Star(Math.random() * 800, Math.random() * 600, Math.random() * 3 + 1, Math.random() * this.starSpeed + 0.1));
 		}
 
 		var _en = _.coq.entities;
 
-		_en.create(GameBoundingBox, {
-			//front
-			"pos": {"x": 325, "y": 50},
-			"size": {"x": 175, "y": 25}
-		});
+		for(var i = 0; i < collisionBoxes.length; i++){
+			_en.create(GameCollisionBox, {
+				"pos": {"x": collisionBoxes[i][0], "y": collisionBoxes[i][1]},
+				"size": {"x": collisionBoxes[i][2], "y": collisionBoxes[i][3]}
+			});
+		}
 
-		_en.create(GameBoundingBox, {
-			//bridge right wall
-			"pos": {"x": 475, "y": 75},
-			"size": {"x": 25, "y": 75}
-		});
-
-		_en.create(GameBoundingBox, {
-			//bridge right door
-			//deck front right wall
-			"pos": {"x": 425, "y": 150},
-			"size": {"x": 100, "y": 25}
-		});
-
-		_en.create(GameBoundingBox, {
-			//deck right wall front
-			//right wing door front
-			"pos": {"x": 500, "y": 175},
-			"size": {"x": 25, "y": 175}
-		});
-
-		_en.create(GameBoundingBox, {
-			//right wing front wall
-			"pos": {"x": 525, "y": 300},
-			"size": {"x": 125, "y": 25}
-		});
-
-		_en.create(GameBoundingBox, {
-			//right wing side wall
-			"pos": {"x": 625, "y": 325},
-			"size": {"x": 25, "y": 125}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 425, "y": 425},
-			"size": {"x": 200, "y": 25}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 500, "y": 400},
-			"size": {"x": 25, "y": 125}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 275, "y": 500},
-			"size": {"x": 225, "y": 25}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 275, "y": 400},
-			"size": {"x": 25, "y": 100}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 150, "y": 425},
-			"size": {"x": 225, "y": 25}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 150, "y": 300},
-			"size": {"x": 25, "y": 125}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 175, "y": 300},
-			"size": {"x": 100, "y": 25}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 275, "y": 150},
-			"size": {"x": 25, "y": 200}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 300, "y": 150},
-			"size": {"x": 75, "y": 25}
-		});
-
-		_en.create(GameBoundingBox, {
-			"pos": {"x": 300, "y": 50},
-			"size": {"x": 25, "y": 100}
-		});
-
-		_en.create(GameBoundingBox, { //disembark left
-			"pos": {"x": 350, "y": 250},
-			"size": {"x": 25, "y": 125}
-		});
-
-		_en.create(GameBoundingBox, { //disembark bottom
-			"pos": {"x": 375, "y": 350},
-			"size": {"x": 50, "y": 25}
-		});
-
-		_en.create(GameBoundingBox, { //disembark right
-			"pos": {"x": 425, "y": 250},
-			"size": {"x": 25, "y": 125}
-		});
+		for(var i = 0; i < doors.length; i++){
+			_en.create(GameDoor, {
+				"sensor":{
+					"pos": {"x": doors[i][0][0], "y": doors[i][0][1]},
+					"size": {"x": doors[i][0][2], "y": doors[i][0][3]}
+				},
+				"door": {
+					"pos": {"x": doors[i][0][4], "y": doors[i][0][5]},
+					"size": {"x": doors[i][0][6], "y": doors[i][0][7]}
+				},
+				"orientation": doors[i][1],
+				"locked": doors[i][2]
+			});
+		}
 
 		_en.create(GameOptionBox, {
 			"pos": {"x": 305, "y": 455},
@@ -201,7 +115,7 @@
 					"keyword": "ONE",
 					"text": "Disembark",
 					"action": function(){
-						console.log("yeah!");
+						_.changeGameState("planet test");
 					}.bind(this),
 					"enabled": true
 				}
@@ -242,108 +156,25 @@
 			]
 		});
 
-		_en.create(GameDoor, {
-			"sensor":{
-				"pos": {"x": 375, "y": 125},
-				"size": {"x": 50, "y": 75}
-			},
-			"door": {
-				"pos": {"x": 375, "y": 150},
-				"size": {"x": 50, "y": 25}
-			},
-			"orientation": "horizontal",
-			"locked": false
-		});
-
-		_en.create(GameDoor, {
-			"sensor":{
-				"pos": {"x": 250, "y": 350},
-				"size": {"x": 75, "y": 50}
-			},
-			"door": {
-				"pos": {"x": 275, "y": 350},
-				"size": {"x": 25, "y": 50}
-			},
-			"orientation": "vertical",
-			"locked": false
-		});
-
-		_en.create(GameDoor, {
-			"sensor":{
-				"pos": {"x": 475, "y": 350},
-				"size": {"x": 75, "y": 50}
-			},
-			"door": {
-				"pos": {"x": 500, "y": 350},
-				"size": {"x": 25, "y": 50}
-			},
-			"orientation": "vertical",
-			"locked": false
-		});
-
-		_en.create(GameDoor, {
-			"sensor":{
-				"pos": {"x": 375, "y": 400},
-				"size": {"x": 50, "y": 75}
-			},
-			"door": {
-				"pos": {"x": 375, "y": 425},
-				"size": {"x": 50, "y": 25}
-			},
-			"orientation": "horizontal",
-			"locked": false
-		});
-
-		_en.create(GameDoor, {
-			"sensor":{
-				"pos": {"x": 375, "y": 250},
-				"size": {"x": 50, "y": 75}
-			},
-			"door": {
-				"pos": {"x": 375, "y": 275},
-				"size": {"x": 50, "y": 25}
-			},
-			"orientation": "horizontal",
-			"locked": false
-		});
-
-		_en.create(GamePlayer,{
-			"pos": {"x": 400 - 13, "y": 215},
-			"size": {"x": 25, "y": 25}
-		});
-
 		this.update = function(){
-			while(this.numberOfStars < this.maxStars){
-				this.lastStar = new Star(Math.random() * 800, 0, (Math.random() * 3) + 1, (Math.random() * this.starSpeed) + 0.1, this.lastStar, null);
-				this.lastStar.prev.next = this.lastStar;
-				this.numberOfStars ++;
-			}
-			var starIter = this.firstStar;
-			while(starIter !== null){
-				starIter.y += starIter.speed;
-				if(starIter.y > 600){
-					if(starIter === this.lastStar) this.lastStar = starIter.prev;
-					if(starIter === this.firstStar) this.firstStar = starIter.next;
-					if(starIter.prev !== null) starIter.prev.next = starIter.next;
-					if(starIter.next !== null) starIter.next.prev = starIter.prev;
-
-					this.numberOfStars --;
+			for(var i = 0; i < this.stars.length; i++){
+				this.stars[i].y += this.stars[i].speed;
+				if(this.stars[i].y > 600){
+					this.stars[i].y = -10;
+					this.stars[i].x = Math.random() * 800;
 				}
-				starIter = starIter.next;
 			}
 		};
 
 		this.draw = function(ctx){
 			//starField
 			ctx.strokeStyle = "#cccccc";
-			var starIter = this.firstStar;
 			ctx.beginPath();
-			while(starIter !== null){
-				ctx.moveTo(starIter.x, starIter.y);
-				ctx.lineTo(starIter.x + starIter.size, starIter.y + starIter.size);
-				ctx.moveTo(starIter.x + starIter.size, starIter.y);
-				ctx.lineTo(starIter.x, starIter.y + starIter.size);
-				starIter = starIter.next;
+			for(var i = 0; i < this.stars.length; i++){
+				ctx.moveTo(this.stars[i].x, this.stars[i].y);
+				ctx.lineTo(this.stars[i].x + this.stars[i].size, this.stars[i].y + this.stars[i].size);
+				ctx.moveTo(this.stars[i].x + this.stars[i].size, this.stars[i].y);
+				ctx.lineTo(this.stars[i].x, this.stars[i].y + this.stars[i].size);
 			}
 			ctx.stroke();
 			var strokeStyle = "#0000ff";
@@ -369,13 +200,11 @@
 		if(fill !== undefined) ctx.fill();
 	};
 
-	var Star = function(x, y, size, speed, prev, next){
+	var Star = function(x, y, size, speed){
 		this.x = x;
 		this.y = y;
 		this.size = size;
 		this.speed = speed;
-		this.prev = prev;
-		this.next = next;
 	};
 
 	var pointsOutside = [
@@ -444,6 +273,36 @@
 		[450, 375], //right outer
 		[350, 375], //back outer
 		[350, 250] //left outer
+	];
+
+	var collisionBoxes = [
+		[325, 50, 175, 25],
+		[475, 75, 25, 75],
+		[425, 150, 100, 25],
+		[500, 175, 25, 175],
+		[525, 300, 125, 25],
+		[625, 325, 25, 125],
+		[425, 425, 200, 25],
+		[500, 400, 25, 125],
+		[275, 500, 225, 25],
+		[275, 400, 25, 100],
+		[150, 425, 225, 25],
+		[150, 300, 25, 125],
+		[175, 300, 100, 25],
+		[275, 150, 25, 200],
+		[300, 150, 75, 25],
+		[300, 50, 25, 100],
+		[350, 250, 25, 125],
+		[375, 350, 50, 25],
+		[425, 250, 25, 125]
+	];
+
+	var doors = [
+		[[375, 125, 50, 75, 375, 150, 50, 25], "horizontal", false],
+		[[250, 350, 75, 50, 275, 350, 25, 50], "vertical", false],
+		[[475, 350, 75, 50, 500, 350, 25, 50], "vertical", false],
+		[[375, 400, 50, 75, 375, 425, 50, 25], "horizontal", false],
+		[[375, 250, 50, 75, 375, 275, 50, 25], "horizontal", false]
 	];
 
 	exports.GameSpaceShip = GameSpaceShip;

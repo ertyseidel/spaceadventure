@@ -1,13 +1,20 @@
 ;(function(exports){
 	var GamePlayer = function(_, settings){
 
-		this.BoundingBox = _.coq.collider.CIRCLE;
+		this.CollisionBox = _.coq.collider.CIRCLE;
 		this.wallCollisions = {
 			"up": false,
 			"down": false,
 			"left": false,
 			"right": false
 		};
+		this.off = {"x": 0, "y": 0};
+
+		this.movementBox = {
+			"CollisionBox": this.CollisionBox = _.coq.collider.RECTANGLE,
+			"pos": {"x": 150, "y": 150},
+			"size": {"x": 500, "y": 300}
+		}
 
 		var defaults = {
 			"pos": {"x": 0, "y": 0},
@@ -26,9 +33,14 @@
 		}
 
 		this.draw = function(ctx){
+			var drawCoords = {
+				"x": this.pos.x,
+				"y": this.pos.y
+			};
+			//draw player
 			ctx.strokeStyle = "#0000ff";
 			ctx.beginPath();
-			ctx.arc(this.pos.x + this.size.x / 2, this.pos.y + this.size.y / 2, this.size.x / 2, 0, 2*Math.PI);
+			ctx.arc(drawCoords.x + this.size.x / 2, drawCoords.y + this.size.y / 2, this.size.x / 2, 0, 2*Math.PI);
 			ctx.stroke();
 		};
 
@@ -65,11 +77,10 @@
 			}
 			this.vec.x *= this.friction;
 			this.vec.y *= this.friction;
-
 		};
 
 		this.collision = function(other){
-			if(other instanceof GameBoundingBox){
+			if(other instanceof GameCollisionBox){
 				other.collided = true;
 				//UP
 				if(this.pos.y <= other.pos.y + other.size.y &&
@@ -100,7 +111,7 @@
 		};
 
 		this.uncollision = function(other){
-			if(other instanceof GameBoundingBox){
+			if(other instanceof GameCollisionBox){
 				other.collided = false;
 				if(other == this.wallCollisions.up) this.wallCollisions.up = false;
 				if(other == this.wallCollisions.down) this.wallCollisions.down = false;

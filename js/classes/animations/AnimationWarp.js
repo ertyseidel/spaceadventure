@@ -15,14 +15,17 @@
 		this.numStars = 200;
 		this.stretch = 400;
 
-		this.createStar = function(){
-				this.x = Math.random() * 1400;
-				this.y = Math.random() * 600;
-				this.size = Math.random() * 3 + 1;
-		};
-
 		for(var i = 0; i < this.numStars; i++){
-			this.stars.push(new this.createStar());
+			this.stars.push(new Star(Math.random() * (800 + this.stretch), Math.random() * 600, (Math.random() * 3) + 1));
+		}
+
+		this.update = function(){
+			for(var i = 0; i < this.stars.length; i++){
+				this.stars[i].x += this.driftSpeed;
+				if(this.stars[i].x < 0){
+					this.stars[i].x = 800 + this.stretch;
+				}
+			}
 		}
 
 		this.draw = function(ctx, frame, scene){
@@ -33,7 +36,6 @@
 			switch(scene){
 				case 0: //waiting for warp
 					for(var i = 0; i < this.stars.length; i++){
-						this.stars[i].x += this.driftSpeed;
 						ctx.moveTo(this.stars[i].x, this.stars[i].y);
 						ctx.lineTo(this.stars[i].x + this.stars[i].size, this.stars[i].y + this.stars[i].size);
 						ctx.moveTo(this.stars[i].x + this.stars[i].size, this.stars[i].y);
@@ -42,7 +44,6 @@
 					break;
 				case 1: //stars stretching
 					for(var j = 0; j < this.stars.length; j++){
-						this.stars[j].x += this.driftSpeed;
 						ctx.moveTo(this.stars[j].x, this.stars[j].y);
 						ctx.lineTo(this.stars[j].x + this.stars[j].size - (this.stretch * sceneProgress), this.stars[j].y + this.stars[j].size);
 						ctx.moveTo(this.stars[j].x + this.stars[j].size - (this.stretch * sceneProgress), this.stars[j].y);
@@ -51,7 +52,6 @@
 					break;
 				case 2: //stars hold
 					for(var n = 0; n < this.stars.length; n++){
-						this.stars[n].x += this.driftSpeed;
 						ctx.moveTo(this.stars[n].x, this.stars[n].y);
 						ctx.lineTo(this.stars[n].x + this.stars[n].size - (this.stretch), this.stars[n].y + this.stars[n].size);
 						ctx.moveTo(this.stars[n].x + this.stars[n].size - (this.stretch), this.stars[n].y);
@@ -60,7 +60,6 @@
 					break;
 				case 3: //stars reducing
 					for(var k = 0; k < this.stars.length; k++){
-						this.stars[k].x += this.driftSpeed;
 						ctx.moveTo(this.stars[k].x + this.stars[k].size - (this.stretch), this.stars[k].y + this.stars[k].size);
 						ctx.lineTo(this.stars[k].x - this.stretch * (sceneProgress) + this.stars[k].size, this.stars[k].y);
 						ctx.moveTo(this.stars[k].x - this.stretch * (sceneProgress), this.stars[k].y + this.stars[k].size);
@@ -69,7 +68,6 @@
 					break;
 				case 4: //warp complete
 					for(var m = 0; m < this.stars.length; m++){
-						this.stars[m].x += this.driftSpeed;
 						ctx.moveTo(this.stars[m].x - this.stretch, this.stars[m].y);
 						ctx.lineTo(this.stars[m].x - this.stretch + this.stars[m].size, this.stars[m].y + this.stars[m].size);
 						ctx.moveTo(this.stars[m].x - this.stretch + this.stars[m].size, this.stars[m].y);
@@ -108,6 +106,12 @@
 			ctx.stroke();
 		};
 
+	};
+
+	var Star = function(x, y, size){
+			this.x = x;
+			this.y = y;
+			this.size = size;
 	};
 
 	exports.AnimationWarp = AnimationWarp;

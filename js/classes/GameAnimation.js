@@ -19,6 +19,7 @@
 			if(this.scene == this.animation.scenes.length){
 				this.callback.apply(this, [this.animation]);
 			}
+			this.animation.update()
 		};
 
 		this.draw = function(ctx){
