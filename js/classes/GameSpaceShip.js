@@ -1,16 +1,11 @@
 ;(function(exports){
 	var GameSpaceShip = function(_, settings){
 		this.noCollision = true;
-		for (var i in settings) {
-			this[i] = settings[i];
-		}
+
+		this.maxStars = 150;
+		this.starSpeed = 0.1;
 
 		this.zindex = -100;
-
-		this.stars = []
-		for(var s = 0; s < this.maxStars; s++){
-			this.stars.push(new Star(Math.random() * 800, Math.random() * 600, Math.random() * 3 + 1, Math.random() * this.starSpeed + 0.1));
-		}
 
 		var _en = _.coq.entities;
 
@@ -144,7 +139,7 @@
 					"keyword": "TWO",
 					"text": "StarMap",
 					"action": function(){
-						_.changeGameState('star map');
+						_.changeGameState('galaxy map');
 					}.bind(this),
 					"enabled": true
 				}
@@ -152,31 +147,20 @@
 			"message": [
 				"You enter the bridge of <span class='orion'>The Orion</span>.",
 				"From here, you can spend fuel in an attempt to find uncharted planets [1].",
-				"Or you can view the star map, to visit a planet you've already discovered [2]."
+				"Or you can view the galaxy map, to visit a planet you've already discovered [2]."
 			]
 		});
 
+		_en.create(GameAnimation, {
+			"animation": new AnimationStarScroll(),
+			"zindex": -200
+		});
+
 		this.update = function(){
-			for(var i = 0; i < this.stars.length; i++){
-				this.stars[i].y += this.stars[i].speed;
-				if(this.stars[i].y > 600){
-					this.stars[i].y = -10;
-					this.stars[i].x = Math.random() * 800;
-				}
-			}
+			//pass
 		};
 
 		this.draw = function(ctx){
-			//starField
-			ctx.strokeStyle = "#cccccc";
-			ctx.beginPath();
-			for(var i = 0; i < this.stars.length; i++){
-				ctx.moveTo(this.stars[i].x, this.stars[i].y);
-				ctx.lineTo(this.stars[i].x + this.stars[i].size, this.stars[i].y + this.stars[i].size);
-				ctx.moveTo(this.stars[i].x + this.stars[i].size, this.stars[i].y);
-				ctx.lineTo(this.stars[i].x, this.stars[i].y + this.stars[i].size);
-			}
-			ctx.stroke();
 			var strokeStyle = "#0000ff";
 			var fillStyle = "#000000";
 			//outside
@@ -198,13 +182,6 @@
 		}
 		ctx.stroke();
 		if(fill !== undefined) ctx.fill();
-	};
-
-	var Star = function(x, y, size, speed){
-		this.x = x;
-		this.y = y;
-		this.size = size;
-		this.speed = speed;
 	};
 
 	var pointsOutside = [

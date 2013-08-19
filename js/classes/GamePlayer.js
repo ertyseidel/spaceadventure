@@ -1,6 +1,10 @@
 ;(function(exports){
 	var GamePlayer = function(_, settings){
 
+		var _in = _.coq.inputter;
+
+		this.zindex = 1000;
+
 		this.CollisionBox = _.coq.collider.CIRCLE;
 		this.wallCollisions = {
 			"up": false,
@@ -8,13 +12,6 @@
 			"left": false,
 			"right": false
 		};
-		this.off = {"x": 0, "y": 0};
-
-		this.movementBox = {
-			"CollisionBox": this.CollisionBox = _.coq.collider.RECTANGLE,
-			"pos": {"x": 150, "y": 150},
-			"size": {"x": 500, "y": 300}
-		}
 
 		var defaults = {
 			"pos": {"x": 0, "y": 0},
@@ -23,28 +20,43 @@
 			"acceleration": 0.2,
 			"friction": 0.9,
 			"maxSpeed": 2,
-			"zindex": 100
+			"zindex": 100,
+			"style": "human"
 		};
-
-		var _in = _.coq.inputter;
 
 		for (var i in defaults){
 			this[i] = typeof(settings[i]) == "undefined" ? defaults[i] : settings[i];
 		}
 
 		this.draw = function(ctx){
-			var drawCoords = {
-				"x": this.pos.x,
-				"y": this.pos.y
-			};
 			//draw player
-			ctx.strokeStyle = "#0000ff";
-			ctx.beginPath();
-			ctx.arc(drawCoords.x + this.size.x / 2, drawCoords.y + this.size.y / 2, this.size.x / 2, 0, 2*Math.PI);
-			ctx.stroke();
+			switch(this.style){
+				case "space ship":
+					this.spaceshipDraw(ctx);
+					break;
+				case "human":
+					this.humanDraw(ctx);
+					break;
+			}
 		};
 
+		this.humanDraw = function(ctx){
+			ctx.strokeStyle = "#0000ff";
+			ctx.beginPath();
+			ctx.arc(this.pos.x + this.size.x / 2, this.pos.y + this.size.y / 2, this.size.x / 2, 0, 2*Math.PI);
+			ctx.stroke();
+		}
+
+		this.spaceshipDraw = function(ctx){
+			if(_.debugMode){
+				ctx.fillStyle = "#00ff00";
+				ctx.beginPath();
+				ctx.fillRect(this.pos.x, this.pos.y, 5, 5);
+			}
+		}
+
 		this.update = function(){
+
 			if(_in.state(_in.UP_ARROW)){
 				this.vec.y -= this.acceleration;
 				if(this.vec.y < -this.maxSpeed){
@@ -69,11 +81,17 @@
 					this.vec.x = this.maxSpeed;
 				}
 			}
-			if((this.wallCollisions.left === false && this.vec.x < 0) || (this.wallCollisions.right === false && this.vec.x > 0)){
-				this.pos.x += this.vec.x;
+			if((this.wallCollisions.left === false && this.vec.x < 0) ||
+			(this.wallCollisions.right === false && this.vec.x > 0)){
+				if(this.pos.x + this.vec.x >= 0 && this.pos.x + this.vec.x + this.size.y <= _.coq.renderer.worldSize.x){
+					this.pos.x += this.vec.x;
+				}
 			}
-			if((this.wallCollisions.up === false && this.vec.y < 0) || (this.wallCollisions.down === false && this.vec.y > 0)){
-				this.pos.y += this.vec.y;
+			if((this.wallCollisions.up === false && this.vec.y < 0) ||
+			(this.wallCollisions.down === false && this.vec.y > 0)){
+				if(this.pos.y + this.vec.y >= 0 && this.pos.y + this.vec.y + this.size.y <= _.coq.renderer.worldSize.y){
+					this.pos.y += this.vec.y;
+				}
 			}
 			this.vec.x *= this.friction;
 			this.vec.y *= this.friction;

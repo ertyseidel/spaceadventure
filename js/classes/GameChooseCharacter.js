@@ -224,6 +224,9 @@
 			return this.choices[this.choicesY % this.choices.length][this.choicesX % this.choices[this.choicesY % this.choices.length].length];
 		};
 
+		/*
+		TODO break this out into a OptionSet or something
+		*/
 		this.makeSelection = function(){
 			var hover = this.getHover();
 			if(hover.type == "attribute"){

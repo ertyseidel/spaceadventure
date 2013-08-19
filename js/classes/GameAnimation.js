@@ -1,9 +1,11 @@
 ;(function(exports){
 	var GameAnimation = function(_, settings){
 		this.noCollision = true;
+		this.isStatic = true;
 
 		this.callback = settings.callback;
 		this.animation = settings.animation;
+		this.zindex = settings.zindex;
 
 		this.frame = 0;
 		this.scene = 0;

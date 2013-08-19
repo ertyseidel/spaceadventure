@@ -1,6 +1,7 @@
 ;(function(exports){
 	var GameHUDOption = function(_, settings){
 		this.noCollision = true;
+		this.isStatic = true;
 		for (var i in settings) {
 			this[i] = settings[i];
 		}

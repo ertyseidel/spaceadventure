@@ -1,28 +1,45 @@
 ;(function(exports){
 	var GameScreen = function(_, settings){
 		this.noCollision = true;
-		var _en = _.coq.entities;
 
-		switch(settings.screen){
-			case "start screen":
-				_en.create(GameStartScreen, {});
-				break;
-			case "choose character":
-				_en.create(GameChooseCharacter, {});
-				break;
-			case "space ship":
-				_en.create(GameSpaceShip, {"maxStars": 150, "starSpeed": 0.1});
-				break;
-			case "planet test":
-				_en.create(GamePlanetTest, {});
-				break;
+		this.pos = {
+			"x": 0,
+			"y": 0
 		}
 
-		if(typeof(settings.player) !== 'undefined'){
-			_en.create(GamePlayer,{
-				"pos": {"x": 400 - 13, "y": 215},
-				"size": {"x": 25, "y": 25}
-			});
+		var _en = _.coq.entities;
+		var _ren = _.coq.renderer;
+
+		var player = null;
+		var screen = null;
+
+		settings.init(this);
+
+		if(settings.player != undefined){
+			_en.create(GamePlayer, settings.player, function(p){this.player = p}.bind(this));
+		}
+
+		this.draw = function(ctx){
+			if(_.debugMode){
+				ctx.fillStyle = "#ff6600";
+				ctx.fillRect(_ren.viewCenter.x - 1, _ren.viewCenter.y - 1, 2, 2);
+			}
+		}
+
+		this.update = function(){
+			if(this.player == undefined) return;
+
+			var viewPort = _ren.getViewPort();
+
+			if((_ren.viewCenter.x < this.player.pos.x && viewPort.x + viewPort.width < _ren.worldSize.x) ||
+				(_ren.viewCenter.x > this.player.pos.x && viewPort.x > 0)){
+				_ren.moveViewCenter({x: (this.player.pos.x - _ren.viewCenter.x) / 20, y: 0});
+			}
+
+			if((_ren.viewCenter.y < this.player.pos.y && viewPort.y + viewPort.height < _ren.worldSize.y) ||
+				(_ren.viewCenter.y > this.player.pos.y && viewPort.y > 0)){
+				_ren.moveViewCenter({x: 0, y: (this.player.pos.y - _ren.viewCenter.y) / 20});
+			}
 		}
 
 		_en.create(GameScreenHUD, settings.HUD);

@@ -521,12 +521,26 @@
       return this.ctx;
     },
 
+    moveViewCenter: function(dpos){
+      this.viewCenter.x += dpos.x;
+      this.viewCenter.y += dpos.y;
+    },
+
     setViewCenter: function(pos) {
-        this.viewCenter = { x:pos.x, y:pos.y };
+      this.viewCenter = { x:pos.x, y:pos.y };
     },
 
     setWorldSize: function(size) {
-      this.world = { x:size.x, y:size.y };
+      this.worldSize = { x:size.x, y:size.y };
+    },
+
+    getViewPort: function(){
+      return {
+        "x": this.viewCenter.x - this.viewSize.x / 2,
+        "y": this.viewCenter.y - this.viewSize.y / 2,
+        "width": this.viewSize.x,
+        "height": this.viewSize.y
+      };
     },
 
     update: function(interval) {
@@ -542,7 +556,7 @@
       // translate so all objs placed relative to viewport
       ctx.translate(-viewTranslate.x, -viewTranslate.y);
 
-      // draw game and entities
+      // draw game and entities which are not static
       var collidables = this.coquette.entities.all(undefined, true);
       var noncollidables = this.coquette.entities.all(undefined, false);
       noncollidables.push(this.game);
@@ -550,18 +564,30 @@
       var nc_i = 0;
       while(c_i < collidables.length || nc_i < noncollidables.length){
         if(c_i < collidables.length && nc_i < noncollidables.length && (collidables[c_i].zindex || 0) < (noncollidables[nc_i].zindex || 0)){
-          if (collidables[c_i].draw !== undefined) {
+          if (collidables[c_i].draw !== undefined && (collidables[c_i].isStatic === undefined)) {
             collidables[c_i].draw(ctx);
+          } else if(collidables[c_i].draw !== undefined){
+            ctx.translate(viewTranslate.x, viewTranslate.y);
+            collidables[c_i].draw(ctx);
+            ctx.translate(-viewTranslate.x, -viewTranslate.y);
           }
           c_i ++;
         } else if (nc_i < noncollidables.length){
-          if (noncollidables[nc_i].draw !== undefined) {
+          if (noncollidables[nc_i].draw !== undefined && (noncollidables[nc_i].isStatic === undefined)) {
             noncollidables[nc_i].draw(ctx);
+          } else if(noncollidables[nc_i].draw !== undefined){
+            ctx.translate(viewTranslate.x, viewTranslate.y);
+            noncollidables[nc_i].draw(ctx);
+            ctx.translate(-viewTranslate.x, -viewTranslate.y);
           }
           nc_i++;
         } else{
-          if (collidables[c_i].draw !== undefined) {
+          if (collidables[c_i].draw !== undefined && (collidables[c_i].isStatic === undefined)){
             collidables[c_i].draw(ctx);
+          } else if(collidables[c_i].draw !== undefined){
+            ctx.translate(viewTranslate.x, viewTranslate.y);
+            collidables[c_i].draw(ctx);
+            ctx.translate(-viewTranslate.x, -viewTranslate.y);
           }
           c_i ++;
         }
@@ -588,8 +614,8 @@
 
   var viewOffset = function(viewCenter, viewSize) {
     return {
-      x:viewCenter.x - viewSize.x / 2,
-      y:viewCenter.y - viewSize.y / 2
+      x:Math.floor(viewCenter.x - viewSize.x / 2),
+      y:Math.floor(viewCenter.y - viewSize.y / 2)
      }
   };
 
