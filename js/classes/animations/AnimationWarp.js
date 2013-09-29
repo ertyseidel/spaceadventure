@@ -1,5 +1,6 @@
 ;(function(exports){
-	var AnimationWarp = function(settings){
+	var AnimationWarp = function(_, settings){
+
 		this.scenes = [
 			"waiting for warp",
 			"stars stretching",
@@ -31,7 +32,7 @@
 		this.draw = function(ctx, frame, scene){
 			var sceneFrame = (frame - this.keyFrames[scene]);
 			var sceneProgress = (sceneFrame / (this.keyFrames[scene + 1] - this.keyFrames[scene]));
-			ctx.strokeStyle = "#ffffff";
+			ctx.strokeStyle = _.settings.color_star;
 			ctx.beginPath();
 			switch(scene){
 				case 0: //waiting for warp
@@ -77,8 +78,8 @@
 			}
 			ctx.stroke();
 			//draw The Orion
-			ctx.strokeStyle = "#0000ff";
-			ctx.fillStyle = "#000000";
+			ctx.strokeStyle = _.settings.color_orion;
+			ctx.fillStyle = _.settings.color_orion_fill;
 			//outside
 			ctx.beginPath();
 			ctx.moveTo(300, 275); //start
@@ -105,7 +106,6 @@
 			ctx.lineTo(325, 300); //rear
 			ctx.stroke();
 		};
-
 	};
 
 	exports.AnimationWarp = AnimationWarp;

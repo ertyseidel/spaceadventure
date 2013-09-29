@@ -15,12 +15,12 @@
 			if(settings.update !== undefined) settings.update.apply(this, [_]);
 		};
 		this.draw = function(ctx){
-			ctx.fillStyle = "#000000";
-			ctx.strokeStyle = this.enabled ? "#0000ff" : "gray";
+			ctx.fillStyle = _.settings.color_hud_fill;
+			ctx.strokeStyle = this.enabled ? _.settings.color_hud_text : _.settings.color_hud_text_disabled;
 			ctx.fillRect(100 * (this.key - 1), 550, 100, 50);
 			ctx.strokeRect(100 * (this.key - 1), 550, 100, 50);
-			ctx.fillStyle = this.enabled ? "#0000ff" : "gray";
-			ctx.font = "18px 'ubuntu mono'";
+			ctx.fillStyle = this.enabled ? _.settings.color_hud_text : _.settings.color_hud_text_disabled;
+			ctx.font = _.settings.font_hud;
 			ctx.fillText(this.key, (100 * (this.key - 1)) + 5, 570);
 			ctx.fillText(this.text, (100 * (this.key -1)) + 5, 590);
 		};

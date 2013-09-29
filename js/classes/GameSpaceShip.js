@@ -124,19 +124,19 @@
 			"pos": {"x": 330, "y": 80},
 			"size": {"x": 140, "y": 65},
 			"HUD": [
+				// {
+				// 	"key": 1,
+				// 	"keyword": "ONE",
+				// 	"text": "Adventure",
+				// 	"action": function(){
+				// 		_.changeGameState('adventure animation');
+				// 		_.setMessage("The hyperdrives spin up, and you find yourself speeding through the stars!");
+				// 	}.bind(this),
+				// 	"enabled": true
+				// },
 				{
 					"key": 1,
 					"keyword": "ONE",
-					"text": "Adventure",
-					"action": function(){
-						_.changeGameState('adventure animation');
-						_.setMessage("The hyperdrives spin up, and you find yourself speeding through the stars!");
-					}.bind(this),
-					"enabled": true
-				},
-				{
-					"key": 2,
-					"keyword": "TWO",
 					"text": "StarMap",
 					"action": function(){
 						_.changeGameState('galaxy map');
@@ -152,7 +152,7 @@
 		});
 
 		_en.create(GameAnimation, {
-			"animation": new AnimationStarScroll(),
+			"animation": AnimationStarScroll,
 			"zindex": -200
 		});
 
@@ -161,8 +161,8 @@
 		};
 
 		this.draw = function(ctx){
-			var strokeStyle = "#0000ff";
-			var fillStyle = "#000000";
+			var strokeStyle = _.settings.color_orion;
+			var fillStyle = _.settings.color_orion_fill;
 			//outside
 			drawPath(ctx, pointsOutside, strokeStyle, fillStyle);
 			//inside

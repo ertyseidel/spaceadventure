@@ -4,19 +4,18 @@
 		this.collided = false;
 		var defaults = {
 			"pos": {"x": 0, "y": 0},
-			"size": {"x": 0, "y": 0},
-			"color": "#ff0000"
+			"size": {"x": 0, "y": 0}
 		};
 		for (var i in defaults){
 			this[i] = typeof(settings[i]) == "undefined" ? defaults[i] : settings[i];
 		}
 		this.draw = function(ctx){
-			if(_.debugMode){
-				ctx.strokeStyle = this.color;
+			if(_.GALAXY.debugMode){
+				ctx.strokeStyle = "ff0000";
 				ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
 			}
-			if(_.debugMode && this.collided){
-				ctx.fillStyle = this.color;
+			if(_.GALAXY.debugMode && this.collided){
+				ctx.fillStyle = "ff0000";
 				ctx.fillRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
 			}
 		};

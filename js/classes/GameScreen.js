@@ -20,7 +20,7 @@
 		}
 
 		this.draw = function(ctx){
-			if(_.debugMode){
+			if(_.GALAXY.debugMode){
 				ctx.fillStyle = "#ff6600";
 				ctx.fillRect(_ren.viewCenter.x - 1, _ren.viewCenter.y - 1, 2, 2);
 			}

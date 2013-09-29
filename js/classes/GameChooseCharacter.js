@@ -208,15 +208,15 @@
 		this.updateMessage = function(){
 			_.setMessage(this.getHover().description);
 			if(this.chosenAttributes.length === 0){
-				_.appendMessage("You need to select two more attributes/skills", "#0000ff");
+				_.appendMessage("You need to select two more attributes/skills", _.settings.color_text_info);
 			} else if(this.chosenAttributes.length == 1){
-				_.appendMessage("You need to select one more attribute/skill", "#0000ff");
+				_.appendMessage("You need to select one more attribute/skill", _.settings.color_text_info);
 			}
 			if(this.chosenCombatStyle === false){
-				_.appendMessage("You need to select a combat style", "#0000ff");
+				_.appendMessage("You need to select a combat style", _.settings.color_text_info);
 			}
 			if(this.chosenArmorWeight === false){
-				_.appendMessage("You need to select an armor weight", "#0000ff");
+				_.appendMessage("You need to select an armor weight", _.settings.color_text_info);
 			}
 		};
 

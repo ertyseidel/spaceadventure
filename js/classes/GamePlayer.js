@@ -5,13 +5,17 @@
 
 		this.zindex = 1000;
 
-		this.CollisionBox = _.coq.collider.CIRCLE;
+		this.visible = settings.visible == undefined ? true : settings.visible;
+
+		this.boundingBox = _.coq.collider.CIRCLE;
 		this.wallCollisions = {
 			"up": false,
 			"down": false,
 			"left": false,
 			"right": false
 		};
+
+		this.solarSystemCollisions = [];
 
 		var defaults = {
 			"pos": {"x": 0, "y": 0},
@@ -29,6 +33,7 @@
 		}
 
 		this.draw = function(ctx){
+			if(!this.visible) return;
 			//draw player
 			switch(this.style){
 				case "space ship":
@@ -41,18 +46,17 @@
 		};
 
 		this.humanDraw = function(ctx){
-			ctx.strokeStyle = "#0000ff";
+			ctx.strokeStyle = _.settings.color_player_human;
 			ctx.beginPath();
 			ctx.arc(this.pos.x + this.size.x / 2, this.pos.y + this.size.y / 2, this.size.x / 2, 0, 2*Math.PI);
 			ctx.stroke();
 		}
 
 		this.spaceshipDraw = function(ctx){
-			if(_.debugMode){
-				ctx.fillStyle = "#00ff00";
-				ctx.beginPath();
-				ctx.fillRect(this.pos.x, this.pos.y, 5, 5);
-			}
+			ctx.strokeStyle = _.settings.color_player_spaceship;
+			ctx.beginPath();
+			ctx.arc(this.pos.x + this.size.x / 2, this.pos.y + this.size.y / 2, 5, 0, 2*Math.PI);
+			ctx.stroke();
 		}
 
 		this.update = function(){
@@ -98,6 +102,28 @@
 		};
 
 		this.collision = function(other){
+			({
+				"human": this.humanCollision,
+				"space ship": this.spaceshipCollision
+			})[this.style].bind(this)(other);
+		};
+
+		this.spaceshipCollision = function(other){
+			if(other instanceof GameSolarSystem && this.solarSystemCollisions.indexOf(other) == -1){
+				this.solarSystemCollisions.push(other);
+			}
+			if(this.solarSystemCollisions.length > 0){
+				this.solarSystemCollisions.sort(function(a, b){
+					return stationDist(this, a) - stationDist(this, b);
+				}.bind(this));
+				this.solarSystemCollisions[0].collided = true;
+				for(var i = 1; i < this.solarSystemCollisions.length; i++){
+					this.solarSystemCollisions[i].collided = false;
+				}
+			}
+		};
+
+		this.humanCollision = function(other){
 			if(other instanceof GameCollisionBox){
 				other.collided = true;
 				//UP
@@ -125,10 +151,16 @@
 					this.wallCollisions.right = other;
 				}
 			}
-
 		};
 
 		this.uncollision = function(other){
+			({
+				"human": this.humanUncollision,
+				"space ship": this.spaceshipUncollision
+			})[this.style].bind(this)(other);
+		};
+
+		this.humanUncollision = function(other){
 			if(other instanceof GameCollisionBox){
 				other.collided = false;
 				if(other == this.wallCollisions.up) this.wallCollisions.up = false;
@@ -137,7 +169,21 @@
 				if(other == this.wallCollisions.right) this.wallCollisions.right = false;
 			}
 		};
+
+		this.spaceshipUncollision = function(other){
+			other.collided = false;
+			if(other instanceof GameSolarSystem){
+				this.solarSystemCollisions.splice(this.solarSystemCollisions.indexOf(other), 1);
+			}
+		}
 	};
+
+	function stationDist(player, station){
+		return Math.sqrt(
+			Math.pow(player.pos.x - (station.pos.x + (station.size.x / 2)), 2)
+			+ Math.pow(player.pos.y - (station.pos.y + (station.size.y / 2)), 2)
+		);
+	}
 
 	exports.GamePlayer = GamePlayer;
 

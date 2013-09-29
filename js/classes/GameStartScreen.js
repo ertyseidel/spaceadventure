@@ -6,8 +6,8 @@
 
 		_en.create(GameText, {
 			"text": "Space Adventure",
-			"fillStyle": "white",
-			"font": "40px 'ubuntu mono'",
+			"fillStyle": _.settings.color_text,
+			"font": _.settings.font_title,
 			"y": 100
 		});
 	};

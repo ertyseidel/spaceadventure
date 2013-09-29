@@ -39,10 +39,11 @@
 				for (var h = 0; h < this.HUDOptions.length; h++){
 					_.coq.entities.destroy(this.HUDOptions[h]);
 				}
+				this.HUDOptions = [];
 			}
 		};
 		this.draw = function(ctx){
-			if(_.debugMode){
+			if(_.GALAXY.debugMode){
 				ctx.strokeStyle = this.enabled ? "#0000ff" : "gray";
 				ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
 				ctx.beginPath();

@@ -10,10 +10,10 @@
 		this.currentPlayerRect = {};
 
 		this.draw = function(ctx){
-			ctx.strokeStyle = "#000066";
+			ctx.strokeStyle = _.settings.color_galaxy_grid;
 			this.drawGrid(ctx);
 			ctx.drawImage(_.GALAXY.starsBuffer, 0, 0);
-			ctx.strokeStyle = "#ffffff";
+			ctx.strokeStyle = _.settings.color_galaxy_outline_box;
 			ctx.strokeRect(this.currentPlayerRect.x, this.currentPlayerRect.y, this.currentPlayerRect.width, this.currentPlayerRect.height);
 		}
 
@@ -50,27 +50,43 @@
 
 				var density = 0;
 				var life = false;
+				var station = false;
+				var pirates = false;
 				for(var i = 0; i < solarRectImage.data.length; i+=4){
 					density += solarRectImage.data[i] + solarRectImage.data[i+1] + solarRectImage.data[i+2] >= 255 ? 1 : 0;
-					if(solarRectImage.data[i+1] == 255 && solarRectImage.data[i] == 0){
+					if(solarRectImage.data[i+1] > 200 && solarRectImage.data[i] == 0){
 						life = true;
+					}
+					if(solarRectImage.data[i] > 200 && solarRectImage.data[i+1] == 0){
+						station = true;
+					}
+					if(solarRectImage.data[i] > 200 && solarRectImage.data[i+1] > 70 && solarRectImage.data[i+2] == 0){
+						pirates = true;
 					}
 				}
 				density /= solarRectImage.data.length / 4;
 
 				if(density > .5){
-					_.setMessage("The incredible density of stars here prevents safe interstellar travel.", "#0000ff");
+					_.setMessage("The incredible density of stars here prevents safe interstellar travel.");
 				} else if(density < .05){
-					_.setMessage("There is not much here, perhaps a lonely star.", "#0000ff");
+					_.setMessage("There is not much here, perhaps a lonely star.");
 				} else{
 					_.setMessage("");
 				}
 
 				if(life){
-					_.appendMessage("Lifeforms detected on at least one system.", "#0000ff");
+					_.appendMessage("Lifeforms detected on at least one system.", _.settings.color_text_info);
 				}
 
-				if(_.debugMode){
+				if(station){
+					_.appendMessage("There is a large space station in this sector.", _.settings.color_text_info);
+				}
+
+				if(pirates){
+					_.appendMessage("A dangerous pirate treasure cache is located here!", _.settings.color_text_info);
+				}
+
+				if(_.GALAXY.debugMode){
 					_.appendMessage("Density: " + density);
 				}
 

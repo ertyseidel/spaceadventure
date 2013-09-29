@@ -43,7 +43,7 @@
 		this.draw = function(ctx){
 			//ctx.strokeStyle = "#ff0000";
 			//ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
-			ctx.strokeStyle = "#0000ff";
+			ctx.strokeStyle = _.settings.color_orion;
 			if(this.orientation == "vertical"){
 				if(this.opening === 0 && !this.triggered && this.waiting === 0){
 					ctx.strokeRect(this.door.pos.x, this.door.pos.y, this.door.size.x, this.door.size.y / 2);

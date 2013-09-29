@@ -2,10 +2,14 @@ Debugging Hotkeys
  "d" enables debug mode
  "c" returns view to center
 
+Known Bugs:
+ + Most of the actions on the spaceship don't work
+ + A lot of planets show up as white on the galaxy map but actually have life
+ + The player often sticks to walls
+
 8/19/2013
  + Added Changelog
  + Rewrote galaxy generation to look more galaxylike
  + Change galaxy image generation to run on startup to avoid hang on first galaxy map view
  + Added functionality to remember user's position in galaxy, and spaceship maps
  + Refactored large chunks of state machine code (thanks Mary Rose Cook!)
-

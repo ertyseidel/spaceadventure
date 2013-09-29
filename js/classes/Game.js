@@ -1,35 +1,49 @@
 ;(function(exports){
-	var Game = function(canvasId, textId, width, height) {
-		this.coq = new Coquette(this, canvasId, width, height, "#000");
+	var Game = function(canvasId, textId, width, height, gameSettings) {
+		this.settings = gameSettings;
+		this.coq = new Coquette(this, canvasId, width, height, this.settings.color_background_fill);
 		this.gameState = null;
-		this.debugMode = false;
 		this.GALAXY = {};
 
-		this.GALAXY.positions = {};
+		this.toSave = ["positions", "randomSeed", "debugMode", "planetRotation"];
 
-		//set up the canvas for the GameGalaxyMap
+		if(localStorage.length == 0){
+			refreshGame(this);
+		} else{
+			loadGame(this);
+		}
+
 		generateGalaxy(this);
+
 		this.GALAXY.starsBuffer = renderToCanvas(6000, 6000, function(ctx){
-			for (var i = 0; i < this.GALAXY.galaxyStars.length; i++) {
+			this.GALAXY.galaxyStars.forEach(function(star){
+				var planetString = star.size.toString(2);
+				planetString = planetString.substring(planetString.indexOf(".") + 1);
 				ctx.beginPath();
-				if(this.GALAXY.galaxyStars[i].hasLife){
-					ctx.fillStyle = "#00ff00";
-					ctx.fillRect(this.GALAXY.galaxyStars[i].x, this.GALAXY.galaxyStars[i].y, 1, 1);
+				if(planetString.indexOf(generateOneString(this.settings.ring_count_pirate_cache)) != -1){
+					ctx.fillStyle = this.settings.color_pirate_cache;
+					ctx.fillRect(star.x, star.y, 1, 1);
+				} else if(planetString.indexOf(generateOneString(this.settings.ring_count_space_station)) != -1){
+					ctx.fillStyle = this.settings.color_space_station;
+					ctx.fillRect(star.x, star.y, 1, 1);
+				} else if(planetString.indexOf(generateOneString(this.settings.ring_count_live_planet)) != -1){
+					ctx.fillStyle = this.settings.color_live_planet;
+					ctx.fillRect(star.x, star.y, 1, 1);
 				} else{
-					ctx.fillStyle = "#ffffff";
-					ctx.fillRect(this.GALAXY.galaxyStars[i].x, this.GALAXY.galaxyStars[i].y, 1, 1);
+					ctx.fillStyle = this.settings.color_star;
+					ctx.fillRect(star.x, star.y, 1, 1);
 				}
-			}
+			}.bind(this));
 		}.bind(this));
 
 		this.setMessage = function(msg, col){
-			var color = col || "#ffffff";
+			var color = col || this.settings.color_text_default;
 			this.GALAXY.text = [{"msg": msg, "col": col}];
 			document.getElementById(textId).innerHTML = "<p style='color: " + color + "'>" + msg + "</p>";
 		};
 
 		this.appendMessage = function(msg, col){
-			var color = col || "#ffffff";
+			var color = col || this.settings.color_text_default;
 			this.GALAXY.text.push({"msg": msg, "col": col});
 			document.getElementById(textId).innerHTML += "<p style='color: " + color + "'>" + msg + "</p>";
 		};
@@ -67,13 +81,44 @@
 				this.coq.ticker.stop = true;
 			}
 			if(this.coq.inputter.changes(this.coq.inputter.D)){
-				this.debugMode = ! this.debugMode;
+				this.GALAXY.debugMode = ! this.GALAXY.debugMode;
 			}
 			if(this.coq.inputter.changes(this.coq.inputter.C)){
 				this.coq.renderer.setViewCenter(this.coq.renderer.center());
 			}
+			if(this.coq.inputter.changes(this.coq.inputter.S)){
+				saveGame(this);
+			}
 		};
+
 	};
+
+
+	var saveGame = function(game){
+		localStorage.clear();
+		game.toSave.forEach(function(save){
+			if(game.GALAXY[save] != undefined){
+				localStorage[save] = JSON.stringify(game.GALAXY[save]);
+			}
+		});
+	}
+
+	var loadGame = function(game){
+		game.toSave.forEach(function(save){
+			var temp = localStorage.getItem(save);
+			if(temp != null){
+				game.GALAXY[save] = JSON.parse(temp);
+			}
+		});
+	}
+
+	var refreshGame = function(game){
+		game.GALAXY.positions = {};
+		game.GALAXY.randomSeed = Math.random();
+		game.GALAXY.debugMode = false;
+		Math.seedrandom(game.GALAXY.randomSeed);
+		generateGalaxy(game);
+	}
 
 	var shuffle = function(array) {
 		//http://stackoverflow.com/a/962890/374601
@@ -136,11 +181,6 @@
 			});
 			_.GALAXY.galaxyStars = temp;
 		}
-		_.GALAXY.galaxyStars.forEach(function(star){
-			var planetString = star.size.toString(2);
-			planetString = planetString.substring(planetString.indexOf(".") + 1);
-			star.hasLife = planetString.indexOf("1111111111") != -1;
-		});
 	}
 
 	var Star = function(x, y, size, speed){
@@ -148,14 +188,13 @@
 		this.y = y || 0;
 		this.size = size || 1;
 		this.speed = speed || 0;
-		this.hasLife = false;
 	};
 
 	var stateStartScreen = function(game, changeVars){
 		game.setMessage("Welcome to Space Adventure");
 		game.appendMessage("Use the number keys (1-8) to choose options.");
 		game.appendMessage("You can start a new game [1], or continue a saved game [2], if you have one.");
-		game.appendMessage("BETA! You can <a href='./changelog.txt'>check out the changelog</a> while I'm working on this.", "#ff0000");
+		game.appendMessage("This is an alpha release! You can <a href='./changelog.txt'>check out the changelog</a> while I'm working on this.", "#ff0000");
 		game.coq.entities.create(GameScreen, {
 			init: function(gameScreen){
 				game.coq.renderer.setWorldSize({x: 800, y: 600});
@@ -167,8 +206,32 @@
 					"key": 1,
 					"keyword": "ONE",
 					"action": function(){
-						game.changeGameState("choose character");
-					}.bind(game),
+						if(game.GALAXY.newGameWarning == undefined && localStorage.length > 0){
+							game.setMessage("Are you sure you want to start a new game?", game.settings.color_text_warning);
+							game.appendMessage("Your game in progress will be deleted. This cannot be undone.");
+							game.appendMessage("Hit [4] to continue...", game.settings.color_text_info);
+							game.GALAXY.newGameWarning = true;
+							game.coq.entities.all(GameHUDOption).forEach(function(option){
+								if(option.key == 1){
+									game.coq.entities.destroy(option);
+									game.coq.entities.create(GameHUDOption, {
+										"key": 4,
+										"keyword": "FOUR",
+										"action": function(){
+											localStorage.clear();
+											refreshGame(game);
+											game.changeGameState("choose character");
+										}.bind(this),
+										"text": "New Game",
+										"enabled": true
+									});
+								}
+							});
+							delete game.GALAXY.newGameWarning;
+						} else{
+							game.changeGameState("choose character");
+						}
+					}.bind(this),
 					"text": "New Game",
 					"enabled": true
 				},
@@ -176,18 +239,18 @@
 					"key": 2,
 					"keyword": "TWO",
 					"action": function(){
-
+						this.changeGameState("space ship");
+						delete game.GALAXY.newGameWarning;
 					}.bind(game),
 					"text": "Continue",
-					"enabled": false
+					"enabled": localStorage.length > 0
 				}
 			]
 		});
 		game.coq.entities.create(GameAnimation, {
-			"animation": new AnimationWarp({
-				"keyFrames": [0, 1120, 1240, 1250, 1390, 2200]
-			}),
-			"callback": function(){
+			animation: AnimationWarp,
+			keyFrames: [0, 1120, 1240, 1250, 1390, 2200],
+			callback: function(){
 				for(var i = 0; i < this.animation.stars.length; i++){
 					this.animation.stars[i].x -= this.animation.stretch;
 					if(this.animation.stars[i].x < 0){
@@ -312,7 +375,9 @@
 					"key": 8,
 					"keyword": "EIGHT",
 					"action": function(){
+						saveGame(this);
 						this.changeGameState('start screen');
+						this.appendMessage("Game Saved", game.color_text_info);
 					}.bind(game),
 					"text": "Save/Quit",
 					"enabled": true
@@ -332,8 +397,8 @@
 
 	var stateAdventureAnimation = function(game, changeVars){
 		game.coq.entities.create(GameAnimation, {
-			"animation": new AnimationWarp({}),
-			"callback": function(){
+			animation: AnimationWarp,
+			callback: function(){
 				this.changeGameState('space ship');
 			}.bind(game)
 		});
@@ -375,7 +440,8 @@
 				style: "space ship",
 				acceleration: 3,
 				maxSpeed: 3,
-				friction: 0
+				friction: 0,
+				visible: false
 			}
 		});
 	};
@@ -383,7 +449,7 @@
 	var stateSolarMap = function(game, changeVars){
 		game.coq.entities.create(GameScreen, {
 			init: function(gameScreen){
-				game.coq.renderer.setWorldSize({x: 800, y: 600});
+				game.coq.renderer.setWorldSize({x: 1000, y: 800});
 				game.coq.renderer.setViewCenter(game.coq.renderer.center());
 				game.coq.entities.create(GameSolarMap, {
 						solarRectImage: changeVars.solarRectImage,
@@ -403,8 +469,8 @@
 			],
 			player: {
 				pos: {
-					x: 400,
-					y: 300,
+					x: 500,
+					y: 400,
 				},
 				style: "space ship"
 			}
@@ -412,7 +478,6 @@
 	};
 
 	var statePlanetTest = function(game, changeVars){
-		console.log(game.coq.renderer);
 		game.coq.entities.create(GameScreen, {
 			init: function(gameScreen){
 				game.coq.renderer.setWorldSize({x: 2000, y: 2000});
@@ -449,6 +514,11 @@
 		renderFunction(buffer.getContext('2d'));
 		return buffer;
 	};
+
+	var generateOneString = function(len){
+		var ones = "11111111111111111111111111";
+		return ones.substring(0, len);
+	}
 
 	exports.Star = Star;
 

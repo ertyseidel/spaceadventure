@@ -1,5 +1,5 @@
 ;(function(exports){
-	var AnimationStarScroll = function(settings){
+	var AnimationStarScroll = function(_, settings){
 		this.noCollision = true;
 
 		this.scenes = [
@@ -28,7 +28,7 @@
 
 		this.draw = function(ctx, frame, scene){
 			//starField
-			ctx.strokeStyle = "#cccccc";
+			ctx.strokeStyle = _.settings.color_star;
 			ctx.beginPath();
 			for(var i = 0; i < this.stars.length; i++){
 				ctx.moveTo(this.stars[i].x, this.stars[i].y);

@@ -4,7 +4,8 @@
 		this.isStatic = true;
 
 		this.callback = settings.callback;
-		this.animation = settings.animation;
+		var clazz = settings.animation;
+		this.animation = new clazz(_, settings);
 		this.zindex = settings.zindex;
 
 		this.frame = 0;

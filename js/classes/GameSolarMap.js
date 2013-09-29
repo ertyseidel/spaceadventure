@@ -2,87 +2,62 @@
 	var GameSolarMap = function(_, settings){
 		this.noCollision = true;
 
-		this.stars = getStarsInRect(_.GALAXY.galaxyStars, settings.solarRect);
-		this.stars.forEach(function(star){
-			star.x = _.coq.renderer.worldSize.x * ((star.x - settings.solarRect.x) / settings.solarRect.width);
-			star.y = _.coq.renderer.worldSize.y * ((star.y - settings.solarRect.y) / settings.solarRect.height);
-			star.size *= 10;
-		});
+		this.solarSystems = [];
+		this.HUDOptions = [];
+		this.currentSolarSystem = null;
 
-		var Ring = function(){
-			this.r = 0,
-			this.p = 0
-		}
+		var stars = getStarsInRect(_.GALAXY.galaxyStars, settings.solarRect);
+		var _en = _.coq.entities;
+		stars.forEach(function(star){
+			_en.create(GameSolarSystem, {"star": star, "solarRect": settings.solarRect}, function(s){this.solarSystems.push(s);}.bind(this));
+		}.bind(this));
 
-		Ring.prototype.addBit = function(a){
-			switch(a){
-				case "0":
-					this.r ++;
-				case "1":
-					this.p ++;
-			}
-		}
-
-		this.stars.forEach(function(star){
-			var planetString = star.size.toString(2);
-			planetString = planetString.substring(planetString.indexOf(".") + 1);
-			star.rings = [];
-			var ring = new Ring();
-			var i = 1;
-			while(i < planetString.length){
-				if(planetString[i] == "0" && planetString[i-1] == "1"){
-					star.rings.push(ring);
-					ring = new Ring();
-					ring.addBit(planetString[i]);
-				} else {
-					ring.addBit(planetString[i]);
-				}
-				i++;
-			}
-			star.rings.push(ring);
-		});
-
-		this.draw = function(ctx){
-			this.stars.forEach(function(star){
-				ctx.fillStyle = "#ffffff";
-				ctx.beginPath();
-				ctx.arc(star.x, star.y, star.size / 2, 0, 2*Math.PI);
-				ctx.closePath();
-				ctx.fill();
-
-				var rad = 30;
-				star.rings.forEach(function(ring){
-					rad += ring.r * 5;
-					if(ring.p > 15){ //pirate cache
-						ctx.strokeStyle = "#ff6600";
-						ctx.beginPath();
-						ctx.arc(star.x, star.y, rad, 0, 2*Math.PI);
-						ctx.stroke();
-					} else if(ring.p > 12){ //space station
-						ctx.strokeStyle = "#ffffff";
-						ctx.beginPath();
-						ctx.arc(star.x, star.y, rad, 0, 2*Math.PI);
-						ctx.stroke();
-					} else if(ring.p > 9){ //planet
-						ctx.strokeStyle = "#00ff00";
-						ctx.beginPath();
-						ctx.arc(star.x, star.y, rad, 0, 2*Math.PI);
-						ctx.stroke();
-					} else if(ring.p > 6){ //asteroid belt
-						ctx.strokeStyle = "#999999";
-						ctx.beginPath();
-						ctx.arc(star.x, star.y, rad, 0, 2*Math.PI);
-						ctx.stroke();
-					} else if(ring.p > 3){ //gas field
-						ctx.strokeStyle = "#444444";
-						ctx.beginPath();
-						ctx.arc(star.x, star.y, rad, 0, 2*Math.PI);
-						ctx.stroke();
+		this.update = function(){
+			var solarSystemCollisions = _.coq.entities.all(GamePlayer)[0].solarSystemCollisions;
+			if(solarSystemCollisions.length > 0 && solarSystemCollisions[0] != this.currentSolarSystem){
+				this.destroyHUDElements();
+				this.currentSolarSystem = solarSystemCollisions[0];
+				_.setMessage("There is a star here.");
+				var starHasSomething = false;
+				this.currentSolarSystem.rings.forEach(function(ring){
+					if(ring.p >= _.settings.ring_count_pirate_cache){
+						_.appendMessage("There is a pirate cache!");
+					} else if(ring.p >= _.settings.ring_count_space_station){
+						_.appendMessage("There is a space station here!");
+					} else if(ring.p >= _.settings.ring_count_live_planet){
+						_.appendMessage("There is a planet with life here!");
+					} else if(ring.p >= _.settings.ring_count_dead_planet){
+						_.appendMessage("There is a dead planet here.");
+					}
+					if(ring.p >= _.settings.ring_count_dead_planet){
+						starHasSomething = true;
 					}
 				});
+				if(!starHasSomething){
+					_.appendMessage("... but there is nothing of interest orbiting it.");
+				}
+				this.createHUDElements(this.currentSolarSystem);
+			} else if(solarSystemCollisions.length == 0){
+				this.currentSolarSystem = null;
+				_.setMessage("");
+			}
+		};
 
+		this.createHUDElements = function(solarSystem){
+			var addToHUD = function(e){this.HUDOptions.push(e);}.bind(this);
+			solarSystem.getHUDOptions().forEach(function(option){
+				_en.create(GameHUDOption, option, addToHUD);
 			});
-		}
+		};
+
+		this.destroyHUDElements = function(solarSystem){
+			if(this.HUDOptions.length > 0){
+				for (var h = 0; h < this.HUDOptions.length; h++){
+					_.coq.entities.destroy(this.HUDOptions[h]);
+				}
+				this.HUDOptions = [];
+			}
+		};
 
 	};
 
@@ -101,13 +76,13 @@
 				smallerIndex = largerIndex = currentIndex;
 				while(smallerIndex >= 0 && arr[smallerIndex].y >= rect.y){
 					if(arr[smallerIndex].x >= rect.x && arr[smallerIndex].x < rect.x + rect.width){
-						rtn.push(new Star(arr[smallerIndex].x, arr[smallerIndex].y, arr[smallerIndex].size, arr[smallerIndex].speed));
+						rtn.push(arr[smallerIndex]);
 					}
 					smallerIndex --;
 				}
 				while(largerIndex < arr.length && arr[largerIndex].y < rect.y + rect.height){
 					if(arr[largerIndex].x >= rect.x && arr[largerIndex].x < rect.x + rect.width){
-						rtn.push(new Star(arr[largerIndex].x, arr[largerIndex].y, arr[largerIndex].size, arr[largerIndex].speed));
+						rtn.push(arr[largerIndex]);
 					}
 					largerIndex ++;
 				}
@@ -116,8 +91,7 @@
 				minIndex = currentIndex + 1;
 			} else if(arr[currentIndex].y > rect.y + rect.height){
 				maxIndex = currentIndex - 1;
-			} else{
-				console.log("THIS IS UNACCEPTABLLEEEEEEEEE");
+			} else{ //should never happen
 				return [];
 			}
 		}
