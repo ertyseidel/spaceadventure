@@ -9,31 +9,30 @@
 
 		var _en = _.coq.entities;
 
-		this.gmd = new GameMapData(_);
-		this.readyToDraw = false;
-		this.gmd.load('./levels/spaceship.svg', function(){this.readyToDraw = true;}.bind(this));
+		this.bg = document.createElement("canvas");
+		canvg(this.bg, './levels/spaceship.svg');
 
-		// for(var i = 0; i < collisionBoxes.length; i++){
-		// 	_en.create(GameCollisionBox, {
-		// 		"pos": {"x": collisionBoxes[i][0], "y": collisionBoxes[i][1]},
-		// 		"size": {"x": collisionBoxes[i][2], "y": collisionBoxes[i][3]}
-		// 	});
-		// }
+		for(var i = 0; i < collisionBoxes.length; i++){
+			_en.create(GameCollisionBox, {
+				"pos": {"x": collisionBoxes[i][0], "y": collisionBoxes[i][1]},
+				"size": {"x": collisionBoxes[i][2], "y": collisionBoxes[i][3]}
+			});
+		}
 
-		// for(var i = 0; i < doors.length; i++){
-		// 	_en.create(GameDoor, {
-		// 		"sensor":{
-		// 			"pos": {"x": doors[i][0][0], "y": doors[i][0][1]},
-		// 			"size": {"x": doors[i][0][2], "y": doors[i][0][3]}
-		// 		},
-		// 		"door": {
-		// 			"pos": {"x": doors[i][0][4], "y": doors[i][0][5]},
-		// 			"size": {"x": doors[i][0][6], "y": doors[i][0][7]}
-		// 		},
-		// 		"orientation": doors[i][1],
-		// 		"locked": doors[i][2]
-		// 	});
-		// }
+		for(var i = 0; i < doors.length; i++){
+			_en.create(GameDoor, {
+				"sensor":{
+					"pos": {"x": doors[i][0][0], "y": doors[i][0][1]},
+					"size": {"x": doors[i][0][2], "y": doors[i][0][3]}
+				},
+				"door": {
+					"pos": {"x": doors[i][0][4], "y": doors[i][0][5]},
+					"size": {"x": doors[i][0][6], "y": doors[i][0][7]}
+				},
+				"orientation": doors[i][1],
+				"locked": doors[i][2]
+			});
+		}
 
 		_en.create(GameOptionBox, {
 			"pos": {"x": 305, "y": 455},
@@ -165,13 +164,39 @@
 		};
 
 		this.draw = function(ctx){
-			if(!this.readyToDraw) return;
-
-			for(var i = 0; i < this.gmd.drawing.length; i++){
-				this.gmd.drawing[i].call(this, ctx);
-			}
+			ctx.drawImage(this.bg, 0, 0);
 		};
 	};
+
+	var collisionBoxes = [
+		[325, 50, 175, 25],
+		[475, 75, 25, 75],
+		[425, 150, 100, 25],
+		[500, 175, 25, 175],
+		[525, 300, 125, 25],
+		[625, 325, 25, 125],
+		[425, 425, 200, 25],
+		[500, 400, 25, 125],
+		[275, 500, 225, 25],
+		[275, 400, 25, 100],
+		[150, 425, 225, 25],
+		[150, 300, 25, 125],
+		[175, 300, 100, 25],
+		[275, 150, 25, 200],
+		[300, 150, 75, 25],
+		[300, 50, 25, 100],
+		[350, 250, 25, 125],
+		[375, 350, 50, 25],
+		[425, 250, 25, 125]
+	];
+
+	var doors = [
+		[[375, 125, 50, 75, 375, 150, 50, 25], "horizontal", false],
+		[[250, 350, 75, 50, 275, 350, 25, 50], "vertical", false],
+		[[475, 350, 75, 50, 500, 350, 25, 50], "vertical", false],
+		[[375, 400, 50, 75, 375, 425, 50, 25], "horizontal", false],
+		[[375, 250, 50, 75, 375, 275, 50, 25], "horizontal", false]
+	];
 
 	exports.GameSpaceShip = GameSpaceShip;
 })(this);
