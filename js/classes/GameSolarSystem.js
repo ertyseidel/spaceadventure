@@ -171,7 +171,7 @@
 	var generateRings = function(star){
 		var rings = [];
 		var planetString = star.size.toString(2);
-		planetString.substring(planetString.indexOf(".") + 1)
+		planetString.substring(planetString.indexOf(".") + 1);
 		var ring = new Ring();
 		var i = 1;
 		while(i < planetString.length){

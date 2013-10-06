@@ -113,7 +113,7 @@
 					"keyword": "ONE",
 					"text": "Disembark",
 					"action": function(){
-						_.changeGameState("planet test");
+						_.changeGameState("planet live");
 					}.bind(this),
 					"enabled": true
 				}

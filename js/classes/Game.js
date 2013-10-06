@@ -71,7 +71,7 @@
 				"adventure animation": stateAdventureAnimation,
 				"galaxy map": stateGalaxyMap,
 				"solar map": stateSolarMap,
-				"planet test": statePlanetTest
+				"planet live": statePlanetLive
 			})[this.gameState](this, changeVars);
 		};
 
@@ -477,12 +477,12 @@
 		});
 	};
 
-	var statePlanetTest = function(game, changeVars){
+	var statePlanetLive = function(game, changeVars){
 		game.coq.entities.create(GameScreen, {
 			init: function(gameScreen){
 				game.coq.renderer.setWorldSize({x: 2000, y: 2000});
 				game.coq.renderer.setViewCenter(game.coq.renderer.center());
-				game.coq.entities.create(GamePlanetTest, {}, function(s){gameScreen.screen = s});
+				game.coq.entities.create(GamePlanetLive, {}, function(s){gameScreen.screen = s});
 			},
 			HUD: [
 				{
