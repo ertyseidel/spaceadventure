@@ -139,7 +139,7 @@
 						"keyword": keywords[i],
 						"text": "Planet",
 						"action": function(){
-							console.log(ring.p);
+							_.changeGameState("planet live");
 						}.bind(this),
 						"enabled": true
 					});

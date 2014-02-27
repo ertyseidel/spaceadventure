@@ -480,8 +480,8 @@
 	var statePlanetLive = function(game, changeVars){
 		game.coq.entities.create(GameScreen, {
 			init: function(gameScreen){
-				game.coq.renderer.setWorldSize({x: 2000, y: 2000});
-				game.coq.renderer.setViewCenter(game.coq.renderer.center());
+				game.coq.renderer.setWorldSize(800, 800);
+				game.coq.renderer.setViewCenter(100, 100);
 				game.coq.entities.create(GamePlanetLive, {}, function(s){gameScreen.screen = s});
 			},
 			HUD: [
@@ -497,8 +497,8 @@
 			],
 			player: {
 				pos: {
-					x: 1000,
-					y: 1000
+					x: 100,
+					y: 100
 				},
 				size: {
 					x: 25,
