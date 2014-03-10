@@ -163,8 +163,8 @@
 
 		this.update = function(){
 			_.GALAXY.planetRotation += Math.PI / 1000;
+			console.log();
 		}
-
 
 	};
 

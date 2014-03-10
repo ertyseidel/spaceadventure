@@ -41,8 +41,10 @@
 			}
 		};
 		this.draw = function(ctx){
-			//ctx.strokeStyle = "#ff0000";
-			//ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
+			if(_.GALAXY.debugMode) {
+				ctx.strokeStyle = "#ff0000";
+				ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
+			}
 			ctx.strokeStyle = _.settings.color_orion;
 			if(this.orientation == "vertical"){
 				if(this.opening === 0 && !this.triggered && this.waiting === 0){
