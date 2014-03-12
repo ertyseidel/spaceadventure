@@ -97,20 +97,20 @@
 	var saveGame = function(game){
 		localStorage.clear();
 		game.toSave.forEach(function(save){
-			if(game.GALAXY[save] != undefined){
+			if(game.GALAXY[save] !== undefined){
 				localStorage[save] = JSON.stringify(game.GALAXY[save]);
 			}
 		});
-	}
+	};
 
 	var loadGame = function(game){
 		game.toSave.forEach(function(save){
 			var temp = localStorage.getItem(save);
-			if(temp != null){
+			if(temp !== null){
 				game.GALAXY[save] = JSON.parse(temp);
 			}
 		});
-	}
+	};
 
 	var refreshGame = function(game){
 		game.GALAXY.positions = {};
@@ -118,7 +118,7 @@
 		game.GALAXY.debugMode = false;
 		Math.seedrandom(game.GALAXY.randomSeed);
 		generateGalaxy(game);
-	}
+	};
 
 	var shuffle = function(array) {
 		//http://stackoverflow.com/a/962890/374601
@@ -132,16 +132,16 @@
 		}
 
 		return array;
-	}
+	};
 
 	var generateGalaxy = function(_){
 		var a = 50; //length
-		var b = .6; //tightness
+		var b = 0.6; //tightness
 		var points = 70; //resolution
 		var density = 4; //stars per point
 		var discRadius = 30; //radius of center disc
 		var discDensity = 3000; //stars in disc
-		var armPull = .6; //percent of stars which stay in the arm disc radius
+		var armPull = 0.6; //percent of stars which stay in the arm disc radius
 		var center = {x: 3000, y:3000}; //center of GameGalaxyMap
 		var scale = 2; //scaling factor of entire image
 		var armCount = 5; //number of galaxy arms
@@ -157,7 +157,7 @@
 				stars = stars.concat(createGalaxyDisc({x: x, y: y}, i * armDiscRad, density * i));
 			}
 			return stars;
-		}
+		};
 
 		var createGalaxyDisc = function(center, rad, density){
 			var stars = [];
@@ -168,7 +168,7 @@
 				stars.push(new Star(center.x + scale * r * Math.cos(t), center.y + scale * r * Math.sin(t), Math.random() * 3 + 1));
 			}
 			return stars;
-		}
+		};
 
 		if(_.GALAXY.galaxyStars == undefined){
 			var temp = [];
@@ -181,7 +181,7 @@
 			});
 			_.GALAXY.galaxyStars = temp;
 		}
-	}
+	};
 
 	var Star = function(x, y, size, speed){
 		this.x = x || 0;

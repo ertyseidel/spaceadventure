@@ -21,9 +21,9 @@
 			"pos": {"x": 0, "y": 0},
 			"size": {"x": 0, "y": 0},
 			"vec": {"x": 0, "y": 0},
-			"acceleration": 0.2,
-			"friction": 0.9,
-			"maxSpeed": 2,
+			"acceleration": 0.4,
+			"friction": 0.87,
+			"maxSpeed": 10,
 			"zindex": 100,
 			"style": "human"
 		};
@@ -131,24 +131,28 @@
 					this.pos.y + this.size.y / 2 > other.pos.y){
 					//this.pos.y = other.pos.y + other.size.y;
 					this.wallCollisions.up = other;
+					console.log(this.wallCollisions);
 				}
 				//DOWN
 				if(this.pos.y + this.size.y >= other.pos.y &&
 					this.pos.y + this.size.y / 2 < other.pos.y){
 					//this.pos.y = other.pos.y - this.size.y;
 					this.wallCollisions.down = other;
+					console.log(this.wallCollisions);
 				}
 				//LEFT
 				if(this.pos.x <= other.pos.x + other.size.x &&
 					this.pos.x + this.size.x / 2 > other.pos.x + other.size.x){
-					this.pos.x = other.pos.x + other.size.x;
+					//this.pos.x = other.pos.x + other.size.x;
 					this.wallCollisions.left = other;
+					console.log(this.wallCollisions);
 				}
 				//RIGHT
 				if(this.pos.x + this.size.x >= other.pos.x &&
 					this.pos.x + this.size.x / 2 < other.pos.x){
-					this.pos.x = other.pos.x - this.size.x;
+					//this.pos.x = other.pos.x - this.size.x;
 					this.wallCollisions.right = other;
+					console.log(this.wallCollisions);
 				}
 			}
 		};

@@ -12,14 +12,16 @@
 		this.bg = document.createElement("canvas");
 		canvg(this.bg, './levels/spaceship.svg');
 
-		for(var i = 0; i < collisionBoxes.length; i++){
+		var i;
+
+		for(i = 0; i < collisionBoxes.length; i++){
 			_en.create(GameCollisionBox, {
 				"pos": {"x": collisionBoxes[i][0], "y": collisionBoxes[i][1]},
 				"size": {"x": collisionBoxes[i][2], "y": collisionBoxes[i][3]}
 			});
 		}
 
-		for(var i = 0; i < doors.length; i++){
+		for(i = 0; i < doors.length; i++){
 			_en.create(GameDoor, {
 				"sensor":{
 					"pos": {"x": doors[i][0][0], "y": doors[i][0][1]},
@@ -127,16 +129,16 @@
 			"pos": {"x": 330, "y": 80},
 			"size": {"x": 140, "y": 65},
 			"HUD": [
-				// {
-				// 	"key": 1,
-				// 	"keyword": "ONE",
-				// 	"text": "Adventure",
-				// 	"action": function(){
-				// 		_.changeGameState('adventure animation');
-				// 		_.setMessage("The hyperdrives spin up, and you find yourself speeding through the stars!");
-				// 	}.bind(this),
-				// 	"enabled": true
-				// },
+				//{
+				//	"key": 1,
+				//	"keyword": "ONE",
+				//	"text": "Adventure",
+				//	"action": function(){
+				//		_.changeGameState('adventure animation');
+				//		_.setMessage("The hyperdrives spin up, and you find yourself speeding through the stars!");
+				//	}.bind(this),
+				//	"enabled": true
+				//},
 				{
 					"key": 1,
 					"keyword": "ONE",
