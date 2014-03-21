@@ -9,7 +9,7 @@
 
 		this.keyFrames = [0, 1000];
 
-		this.stars = []
+		this.stars = [];
 		this.maxStars = 200;
 		this.starSpeed = 0.2;
 		for(var s = 0; s < this.maxStars; s++){

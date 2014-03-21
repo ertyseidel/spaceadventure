@@ -13,9 +13,33 @@
 			this[i] = typeof(settings[i]) == "undefined" ? defaults[i] : settings[i];
 		}
 
-		this.opaque = {
-			pos: this.pos,
-			size: this.size
+		this.getLightSegments = function() {
+			return [
+				{
+					x1: this.pos.x,
+					y1: this.pos.y,
+					x2: this.pos.x + this.size.x,
+					y2: this.pos.y
+				},
+				{
+					x1: this.pos.x + this.size.x,
+					y1: this.pos.y,
+					x2: this.pos.x + this.size.x,
+					y2: this.pos.y + this.size.y
+				},
+				{
+					x1: this.pos.x + this.size.x,
+					y1: this.pos.y + this.size.y,
+					x2: this.pos.x,
+					y2: this.pos.y + this.size.y
+				},
+				{
+					x1: this.pos.x,
+					y1: this.pos.y + this.size.y,
+					x2: this.pos.x,
+					y2: this.pos.y
+				}
+			];
 		};
 
 		this.draw = function(ctx){

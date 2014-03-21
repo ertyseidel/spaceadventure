@@ -5,7 +5,7 @@
 		this.pos = {
 			"x": 0,
 			"y": 0
-		}
+		};
 
 		var _en = _.coq.entities;
 		var _ren = _.coq.renderer;
@@ -15,8 +15,21 @@
 
 		settings.init(this);
 
-		if(settings.player != undefined){
-			_en.create(GamePlayer, settings.player, function(p){this.player = p}.bind(this));
+		if(settings.player !== undefined){
+			_en.create(GamePlayer, settings.player, function(p){
+				this.player = p;
+				_en.create(
+					Light,
+					{
+						pos: {
+							x: p.pos.x + p.size.x / 2,
+							y: p.pos.y + p.size.y / 2
+						},
+						color: "rgba(200,200,255,0.8)"
+					},
+					function(l){this.playerLight = l;}.bind(this)
+				);
+			}.bind(this));
 		}
 
 		this.draw = function(ctx){
@@ -24,10 +37,10 @@
 				ctx.fillStyle = "#ff6600";
 				ctx.fillRect(_ren.viewCenter.x - 1, _ren.viewCenter.y - 1, 2, 2);
 			}
-		}
+		};
 
 		this.update = function(){
-			if(this.player == undefined) return;
+			if(this.player === undefined) return;
 
 			var viewPort = _ren.getViewPort();
 
@@ -40,7 +53,12 @@
 				(_ren.viewCenter.y > this.player.pos.y && viewPort.y > 0)){
 				_ren.moveViewCenter({x: 0, y: (this.player.pos.y - _ren.viewCenter.y) / 20});
 			}
-		}
+
+			this.playerLight.pos = {
+				x: this.player.pos.x + this.player.size.x / 2,
+				y: this.player.pos.y + this.player.size.y  / 2
+			};
+		};
 
 		_en.create(GameScreenHUD, settings.HUD);
 	};

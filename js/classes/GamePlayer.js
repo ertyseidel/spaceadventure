@@ -3,20 +3,6 @@
 
 		var _in = _.coq.inputter;
 
-		this.zindex = 1000;
-
-		this.visible = settings.visible == undefined ? true : settings.visible;
-
-		this.boundingBox = _.coq.collider.CIRCLE;
-		this.wallCollisions = {
-			"up": false,
-			"down": false,
-			"left": false,
-			"right": false
-		};
-
-		this.solarSystemCollisions = [];
-
 		var defaults = {
 			"pos": {"x": 0, "y": 0},
 			"size": {"x": 0, "y": 0},
@@ -25,12 +11,26 @@
 			"friction": 0.87,
 			"maxSpeed": 10,
 			"zindex": 100,
-			"style": "human"
+			"style": "human",
+			"visible": true
 		};
 
 		for (var i in defaults){
 			this[i] = typeof(settings[i]) == "undefined" ? defaults[i] : settings[i];
 		}
+
+		this.zindex = 1000;
+
+		this.boundingBox = _.coq.collider.CIRCLE;
+
+		this.wallCollisions = {
+			"up": false,
+			"down": false,
+			"left": false,
+			"right": false
+		};
+
+		this.solarSystemCollisions = [];
 
 		this.draw = function(ctx){
 			if(!this.visible) return;
@@ -50,14 +50,14 @@
 			ctx.beginPath();
 			ctx.arc(this.pos.x + this.size.x / 2, this.pos.y + this.size.y / 2, this.size.x / 2, 0, 2*Math.PI);
 			ctx.stroke();
-		}
+		};
 
 		this.spaceshipDraw = function(ctx){
 			ctx.strokeStyle = _.settings.color_player_spaceship;
 			ctx.beginPath();
 			ctx.arc(this.pos.x + this.size.x / 2, this.pos.y + this.size.y / 2, 5, 0, 2*Math.PI);
 			ctx.stroke();
-		}
+		};
 
 		this.update = function(){
 
@@ -131,28 +131,24 @@
 					this.pos.y + this.size.y / 2 > other.pos.y){
 					//this.pos.y = other.pos.y + other.size.y;
 					this.wallCollisions.up = other;
-					console.log(this.wallCollisions);
 				}
 				//DOWN
 				if(this.pos.y + this.size.y >= other.pos.y &&
 					this.pos.y + this.size.y / 2 < other.pos.y){
 					//this.pos.y = other.pos.y - this.size.y;
 					this.wallCollisions.down = other;
-					console.log(this.wallCollisions);
 				}
 				//LEFT
 				if(this.pos.x <= other.pos.x + other.size.x &&
 					this.pos.x + this.size.x / 2 > other.pos.x + other.size.x){
 					//this.pos.x = other.pos.x + other.size.x;
 					this.wallCollisions.left = other;
-					console.log(this.wallCollisions);
 				}
 				//RIGHT
 				if(this.pos.x + this.size.x >= other.pos.x &&
 					this.pos.x + this.size.x / 2 < other.pos.x){
 					//this.pos.x = other.pos.x - this.size.x;
 					this.wallCollisions.right = other;
-					console.log(this.wallCollisions);
 				}
 			}
 		};
@@ -179,7 +175,7 @@
 			if(other instanceof GameSolarSystem){
 				this.solarSystemCollisions.splice(this.solarSystemCollisions.indexOf(other), 1);
 			}
-		}
+		};
 	};
 
 	function stationDist(player, station){

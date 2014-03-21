@@ -7,6 +7,12 @@ Known Bugs:
  + A lot of planets show up as white on the galaxy map but actually have life
  + The player often sticks to walls
 
+3/21/2014
+ + It's been a while
+ + Added a system for lights
+ + Made option pads light up
+ - Broke the planet, possibly the galaxy
+
 8/19/2013
  + Added Changelog
  + Rewrote galaxy generation to look more galaxylike

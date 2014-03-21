@@ -28,6 +28,8 @@ var gameSettings = {
 	color_player_spaceship: "#0000ff",
 	color_star_selected: "#0000ff",
 	color_text_selected: "#0000ff",
+	color_option_disabled: "rgba(100, 100, 255, 0.2)",
+	color_option_enabled: "rgba(100, 100, 255, 0.2)",
 
 	font_hud: "18px sans-serif",
 	font_title: "40px sans-serif",

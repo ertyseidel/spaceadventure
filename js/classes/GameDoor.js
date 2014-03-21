@@ -46,29 +46,191 @@
 				ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
 			}
 			ctx.strokeStyle = _.settings.color_orion;
+			var rects = this.getDoorRectangles();
+			if(rects) {
+				rects.forEach(function(rect) {
+					ctx.strokeRect(rect.pos.x, rect.pos.y, rect.size.x, rect.size.y);
+				});
+			}
+		};
+		this.getDoorRectangles = function(){
 			if(this.orientation == "vertical"){
 				if(this.opening === 0 && !this.triggered && this.waiting === 0){
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y, this.door.size.x, this.door.size.y / 2);
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y + this.door.size.y, this.door.size.x, - this.door.size.y / 2);
+					return [
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y
+							},
+							size: {
+								x: this.door.size.x,
+								y: this.door.size.y / 2
+							}
+						},
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y + this.door.size.y
+							},
+							size: {
+								x: this.door.size.x,
+								y: - this.door.size.y / 2
+							}
+						}
+					];
 				} else if(this.opening > 0){
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y, this.door.size.x, (this.door.size.y / 2) * (this.opening / this.openTime));
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y + this.door.size.y, this.door.size.x, - (this.door.size.y / 2) * (this.opening / this.openTime));
+					return [
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y
+							},
+							size: {
+								x: this.door.size.x,
+								y: (this.door.size.y / 2) * (this.opening / this.openTime)
+							}
+						},
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y + this.door.size.y
+							},
+							size: {
+								x: this.door.size.x,
+								y: - (this.door.size.y / 2) * (this.opening / this.openTime)
+							}
+						}
+					];
 				} else if(this.opening < 0 && this.waiting === 0){
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y, this.door.size.x, (this.door.size.y / 2) * (1 + (this.opening / this.openTime)));
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y + this.door.size.y, this.door.size.x, - (this.door.size.y / 2) * (1 + (this.opening / this.openTime)));
+					return [
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y
+							},
+							size: {
+								x: this.door.size.x,
+								y: (this.door.size.y / 2) * (1 + (this.opening / this.openTime))
+							}
+						},
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y + this.door.size.y
+							},
+							size: {
+								x: this.door.size.x,
+								y: - (this.door.size.y / 2) * (1 + (this.opening / this.openTime))
+							}
+						}
+					];
 				}
 			} else if(this.orientation == "horizontal"){
 				if(this.opening === 0 && !this.triggered && this.waiting === 0){
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y, this.door.size.x / 2, this.door.size.y);
-					ctx.strokeRect(this.door.pos.x + this.door.size.x, this.door.pos.y, - this.door.size.x / 2, this.door.size.y);
+					return [
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y
+							},
+							size: {
+								x: this.door.size.x / 2,
+								y: this.door.size.y
+							}
+						},
+						{
+							pos: {
+								x: this.door.pos.x + this.door.size.x,
+								y: this.door.pos.y,
+							},
+							size: {
+								x: - this.door.size.x / 2,
+								y: this.door.size.y
+
+							}
+						}
+					];
 				} else if(this.opening > 0){
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y, (this.door.size.x / 2) * (this.opening / this.openTime),  this.door.size.y);
-					ctx.strokeRect(this.door.pos.x + this.door.size.x, this.door.pos.y, - (this.door.size.x / 2) * (this.opening / this.openTime), this.door.size.y);
+					return [
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y,
+							}, size: {
+								x: (this.door.size.x / 2) * (this.opening / this.openTime),
+								y: this.door.size.y
+							}
+						},
+						{
+							pos: {
+								x: this.door.pos.x + this.door.size.x,
+								y: this.door.pos.y,
+							}, size: {
+								x: - (this.door.size.x / 2) * (this.opening / this.openTime),
+								y: this.door.size.y
+							}
+						}
+					];
 				} else if(this.opening < 0 && this.waiting === 0){
-					ctx.strokeRect(this.door.pos.x, this.door.pos.y, (this.door.size.x / 2) * (1 + (this.opening / this.openTime)), this.door.size.y);
-					ctx.strokeRect(this.door.pos.x + this.door.size.x, this.door.pos.y, - (this.door.size.x / 2) * (1 + (this.opening / this.openTime)), this.door.size.y);
+					return [
+						{
+							pos: {
+								x: this.door.pos.x,
+								y: this.door.pos.y
+							}, size: {
+								x: (this.door.size.x / 2) * (1 + (this.opening / this.openTime)),
+								y: this.door.size.y
+							}
+						},
+						{
+							pos: {
+								x: this.door.pos.x + this.door.size.x,
+								y: this.door.pos.y
+							},
+							size: {
+								x: - (this.door.size.x / 2) * (1 + (this.opening / this.openTime)),
+								y: this.door.size.y
+							}
+						}
+					];
 				}
 			}
+		};
+
+		this.getLightSegments = function() {
+			var rects = this.getDoorRectangles();
+			if(!rects) return [];
+			rects = rects.map(function(rect) {
+				return [
+					{
+						x1: rect.pos.x,
+						y1: rect.pos.y,
+						x2: rect.pos.x + rect.size.x,
+						y2: rect.pos.y
+					},
+					{
+						x1: rect.pos.x + rect.size.x,
+						y1: rect.pos.y,
+						x2: rect.pos.x + rect.size.x,
+						y2: rect.pos.y + rect.size.y
+					},
+					{
+						x1: rect.pos.x + rect.size.x,
+						y1: rect.pos.y + rect.size.y,
+						x2: rect.pos.x,
+						y2: rect.pos.y + rect.size.y
+					},
+					{
+						x1: rect.pos.x,
+						y1: rect.pos.y + rect.size.y,
+						x2: rect.pos.x,
+						y2: rect.pos.y
+					}
+				];
+			});
+			var rtn = [];
+			rtn = rects.concat.apply(rtn, rects);
+			return rtn;
 		};
 	};
 

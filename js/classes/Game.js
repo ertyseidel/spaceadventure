@@ -50,7 +50,7 @@
 
 		this.changeGameState = function(newState, changeVars){
 			var player = this.coq.entities.all(GamePlayer);
-			if(changeVars == undefined) changeVars = {};
+			if(changeVars === undefined) changeVars = {};
 			if(player[0] !== undefined){
 				this.GALAXY.positions[this.gameState] = player[0].pos;
 			}
@@ -89,6 +89,16 @@
 			if(this.coq.inputter.changes(this.coq.inputter.S)){
 				saveGame(this);
 			}
+		};
+
+		this.getAllBoxSegments = function() {
+			var segments = [];
+			this.coq.entities.all().forEach(function(ent) {
+				if (ent.getLightSegments !== undefined) {
+					segments = segments.concat(ent.getLightSegments());
+				}
+			});
+			return segments;
 		};
 
 	};
@@ -162,15 +172,15 @@
 		var createGalaxyDisc = function(center, rad, density){
 			var stars = [];
 			for(var j = 0; j < density; j++){
-				var t = 2 * Math.PI * Math.random()
-				var u = (Math.random() + Math.random()) * rad
+				var t = 2 * Math.PI * Math.random();
+				var u = (Math.random() + Math.random()) * rad;
 				var r = u > rad && Math.random() < armPull ? rad - u : u;
 				stars.push(new Star(center.x + scale * r * Math.cos(t), center.y + scale * r * Math.sin(t), Math.random() * 3 + 1));
 			}
 			return stars;
 		};
 
-		if(_.GALAXY.galaxyStars == undefined){
+		if(_.GALAXY.galaxyStars === undefined){
 			var temp = [];
 			for(var i = 0; i < armCount; i++){
 				temp = temp.concat(createGalaxyArm(center, (i * 2 * Math.PI / armCount)));
@@ -199,14 +209,14 @@
 			init: function(gameScreen){
 				game.coq.renderer.setWorldSize({x: 800, y: 600});
 				game.coq.renderer.setViewCenter(game.coq.renderer.center());
-				game.coq.entities.create(GameStartScreen, {}, function(s){gameScreen.screen = s});
+				game.coq.entities.create(GameStartScreen, {}, function(s){gameScreen.screen = s;});
 			},
 			HUD:[
 				{
 					"key": 1,
 					"keyword": "ONE",
 					"action": function(){
-						if(game.GALAXY.newGameWarning == undefined && localStorage.length > 0){
+						if(game.GALAXY.newGameWarning === undefined && localStorage.length > 0){
 							game.setMessage("Are you sure you want to start a new game?", game.settings.color_text_warning);
 							game.appendMessage("Your game in progress will be deleted. This cannot be undone.");
 							game.appendMessage("Hit [4] to continue...", game.settings.color_text_info);
@@ -268,7 +278,7 @@
 			init: function(gameScreen){
 				game.coq.renderer.setWorldSize({x: 800, y: 600});
 				game.coq.renderer.setViewCenter(game.coq.renderer.center());
-				game.coq.entities.create(GameChooseCharacter, {}, function(s){gameScreen.screen = s});
+				game.coq.entities.create(GameChooseCharacter, {}, function(s){gameScreen.screen = s;});
 			},
 			HUD:[
 				{
@@ -362,7 +372,7 @@
 			init: function(gameScreen){
 				game.coq.renderer.setWorldSize({x: 800, y: 600});
 				game.coq.renderer.setViewCenter({x: 400, y: 300});
-				game.coq.entities.create(GameSpaceShip, {}, function(s){gameScreen.screen = s});
+				game.coq.entities.create(GameSpaceShip, {}, function(s){gameScreen.screen = s;});
 				game.setMessage("Welcome to Space, adventurer!");
 				game.appendMessage("You find yourself adrift in the Corellis arm of the galaxy, one million credits in debt.");
 				game.appendMessage("Find your way around the Galaxy and earn your freedom!");
@@ -385,7 +395,7 @@
 			],
 			player: {
 				pos: function(){
-					return changeVars.storedPlayerPosition == undefined ? {x: 390, y: 210} : changeVars.storedPlayerPosition
+					return changeVars.storedPlayerPosition === undefined ? {x: 390, y: 210} : changeVars.storedPlayerPosition;
 				}(),
 				size: {
 					x: 25,
@@ -409,7 +419,7 @@
 			init: function(gameScreen){
 				game.coq.renderer.setWorldSize({x: 6000, y: 6000});
 				game.coq.renderer.setViewCenter({x: 3000, y: 3000});
-				game.coq.entities.create(GameGalaxyMap, {}, function(s){gameScreen.screen = s});
+				game.coq.entities.create(GameGalaxyMap, {}, function(s){gameScreen.screen = s;});
 			},
 			HUD:[
 				{
@@ -435,7 +445,7 @@
 			],
 			player: {
 				pos: function(){
-					return changeVars.storedPlayerPosition == undefined ? {x: 3000, y: 3000} : changeVars.storedPlayerPosition
+					return changeVars.storedPlayerPosition === undefined ? {x: 3000, y: 3000} : changeVars.storedPlayerPosition;
 				}(),
 				style: "space ship",
 				acceleration: 3,
@@ -454,7 +464,7 @@
 				game.coq.entities.create(GameSolarMap, {
 						solarRectImage: changeVars.solarRectImage,
 						solarRect: changeVars.solarRect
-					}, function(s){gameScreen.screen = s});
+					}, function(s){gameScreen.screen = s;});
 			},
 			HUD: [
 				{
@@ -482,7 +492,7 @@
 			init: function(gameScreen){
 				game.coq.renderer.setWorldSize(800, 800);
 				game.coq.renderer.setViewCenter(100, 100);
-				game.coq.entities.create(GamePlanetLive, {}, function(s){gameScreen.screen = s});
+				game.coq.entities.create(GamePlanetLive, {}, function(s){gameScreen.screen = s;});
 			},
 			HUD: [
 				{
@@ -505,7 +515,7 @@
 					y: 25
 				}
 			}});
-	}
+	};
 
 	var renderToCanvas = function (width, height, renderFunction) {
 		var buffer = document.createElement('canvas');
@@ -518,7 +528,7 @@
 	var generateOneString = function(len){
 		var ones = "11111111111111111111111111";
 		return ones.substring(0, len);
-	}
+	};
 
 	exports.Star = Star;
 

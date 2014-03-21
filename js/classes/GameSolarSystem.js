@@ -5,19 +5,19 @@
 		this.star = settings.star;
 		this.rings = generateRings(settings.star);
 
-		var rad = this.rings.reduce(function(p, c, i, a){return p + (c.r * 4)}, 40);
+		var rad = this.rings.reduce(function(p, c, i, a){return p + (c.r * 4);}, 40);
 
 		this.size = {
 			x: rad,
 			y: rad
-		}
+		};
 
 		this.pos = {
 			x: ((_.coq.renderer.worldSize.x - 200) * ((this.star.x - settings.solarRect.x) / settings.solarRect.width)),
 			y: ((_.coq.renderer.worldSize.y - 200) * ((this.star.y - settings.solarRect.y) / settings.solarRect.height))
-		}
+		};
 
-		if(_.GALAXY.planetRotation == undefined){
+		if(_.GALAXY.planetRotation === undefined){
 			_.GALAXY.planetRotation = Math.random() * Math.PI * 2;
 		}
 
@@ -28,7 +28,7 @@
 			drawPos = {
 				x: this.pos.x + this.size.x / 2,
 				y: this.pos.y + this.size.y / 2
-			}
+			};
 
 			ctx.fillStyle = _.settings.color_star;
 			ctx.beginPath();
