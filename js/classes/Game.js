@@ -7,7 +7,7 @@
 
 		this.toSave = ["positions", "randomSeed", "debugMode", "planetRotation"];
 
-		if(localStorage.length == 0){
+		if(localStorage.length === 0){
 			refreshGame(this);
 		} else{
 			loadGame(this);
@@ -400,8 +400,9 @@
 				size: {
 					x: 25,
 					y: 25
-				}
-			}
+				},
+			},
+			playerLight: true
 		});
 	};
 
@@ -490,8 +491,8 @@
 	var statePlanetLive = function(game, changeVars){
 		game.coq.entities.create(GameScreen, {
 			init: function(gameScreen){
-				game.coq.renderer.setWorldSize(800, 800);
-				game.coq.renderer.setViewCenter(100, 100);
+				game.coq.renderer.setWorldSize({x: 3200, y: 3200});
+				game.coq.renderer.setViewCenter({x: 400, y: 400});
 				game.coq.entities.create(GamePlanetLive, {}, function(s){gameScreen.screen = s;});
 			},
 			HUD: [
@@ -514,7 +515,9 @@
 					x: 25,
 					y: 25
 				}
-			}});
+			},
+			playerLight: true
+		});
 	};
 
 	var renderToCanvas = function (width, height, renderFunction) {

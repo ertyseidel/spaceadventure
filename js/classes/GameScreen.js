@@ -2,11 +2,6 @@
 	var GameScreen = function(_, settings){
 		this.noCollision = true;
 
-		this.pos = {
-			"x": 0,
-			"y": 0
-		};
-
 		var _en = _.coq.entities;
 		var _ren = _.coq.renderer;
 
@@ -18,17 +13,19 @@
 		if(settings.player !== undefined){
 			_en.create(GamePlayer, settings.player, function(p){
 				this.player = p;
-				_en.create(
-					Light,
-					{
-						pos: {
-							x: p.pos.x + p.size.x / 2,
-							y: p.pos.y + p.size.y / 2
+				if(settings.playerLight) {
+					_en.create(
+						Light,
+						{
+							pos: {
+								x: p.pos.x + p.size.x / 2,
+								y: p.pos.y + p.size.y / 2
+							},
+							color: "rgba(200,200,255,0.8)"
 						},
-						color: "rgba(200,200,255,0.8)"
-					},
-					function(l){this.playerLight = l;}.bind(this)
-				);
+						function(l){this.playerLight = l;}.bind(this)
+					);
+				}
 			}.bind(this));
 		}
 
@@ -54,10 +51,51 @@
 				_ren.moveViewCenter({x: 0, y: (this.player.pos.y - _ren.viewCenter.y) / 20});
 			}
 
-			this.playerLight.pos = {
-				x: this.player.pos.x + this.player.size.x / 2,
-				y: this.player.pos.y + this.player.size.y  / 2
+			if (this.playerLight) {
+				this.playerLight.pos = {
+					x: this.player.pos.x + this.player.size.x / 2,
+					y: this.player.pos.y + this.player.size.y  / 2
+				};
+			}
+		};
+
+		this.getLightSegments = function() {
+			var renderBox = {
+				pos: {
+					x: _ren.viewCenter.x - _ren.viewSize.x / 2,
+					y: _ren.viewCenter.y - _ren.viewSize.y / 2
+				},
+				size: {
+					x: _ren.viewSize.x,
+					y: _ren.viewSize.y
+				}
 			};
+			return [
+				{
+					x1: renderBox.pos.x,
+					y1: renderBox.pos.y,
+					x2: renderBox.pos.x + renderBox.size.x,
+					y2: renderBox.pos.y
+				},
+				{
+					x1: renderBox.pos.x + renderBox.size.x,
+					y1: renderBox.pos.y,
+					x2: renderBox.pos.x + renderBox.size.x,
+					y2: renderBox.pos.y + renderBox.size.y
+				},
+				{
+					x1: renderBox.pos.x + renderBox.size.x,
+					y1: renderBox.pos.y + renderBox.size.y,
+					x2: renderBox.pos.x,
+					y2: renderBox.pos.y + renderBox.size.y
+				},
+				{
+					x1: renderBox.pos.x,
+					y1: renderBox.pos.y + renderBox.size.y,
+					x2: renderBox.pos.x,
+					y2: renderBox.pos.y
+				}
+			];
 		};
 
 		_en.create(GameScreenHUD, settings.HUD);
