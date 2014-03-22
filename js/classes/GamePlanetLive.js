@@ -4,6 +4,13 @@
 
 		var _en = _.coq.entities;
 
+		_en.create(GamePlanetArea, {
+			pos: {
+				x: 0,
+				y: 0
+			}
+		});
+
 		_.setMessage("You have arrived on a live planet!");
 
 		this.draw = function() {
