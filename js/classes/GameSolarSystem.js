@@ -139,7 +139,10 @@
 						"keyword": keywords[i],
 						"text": "Planet",
 						"action": function(){
-							_.changeGameState("planet live");
+							_.changeGameState("planet live", {
+								seed: this.pos.x  + "," + this.pos.y,
+								ring: this.ring
+							}.bind(this));
 						}.bind(this),
 						"enabled": true
 					});
@@ -159,12 +162,12 @@
 				}
 			});
 			return options;
-		}
+		};
 
 		this.update = function(){
 			_.GALAXY.planetRotation += Math.PI / 1000;
 			console.log();
-		}
+		};
 
 	};
 
@@ -186,12 +189,12 @@
 		}
 		rings.push(ring);
 		return rings;
-	}
+	};
 
 	var Ring = function(){
 		this.r = 0,
 		this.p = 0
-	}
+	};
 
 	Ring.prototype.addBit = function(a){
 		switch(a){
@@ -202,7 +205,7 @@
 				this.p ++;
 				break;
 		}
-	}
+	};
 
 	var keywords = [
 		"",

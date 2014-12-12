@@ -18,8 +18,33 @@
 		};
 
 		this.update = function() {
+			var player = _en.all(GamePlayer)[0];
+			var paet = _.settings.planet_area_edge_tolerance;
+			if( player.pos.x <= paet){
+				console.log("move left");
+			} else if( player.pos.x + player.size.x >= _.coq.renderer.worldSize.x - paet){
+				console.log("move right");
+			} else if( player.pos.y <= paet){
+				console.log("move up");
+			} else if( player.pos.y + player.size.y >= _.coq.renderer.worldSize.y - paet){
+				console.log("move down");
+			}
+		};
+
+		this.createWorldMap = function() {
+			Math.seedrandom(settings.seed);
+			var size = settings.ring.p;
+
+			var tiles = [];
+			var i;
+			for(i = 0; i < size; i++) {
+				tiles[i] = [];
+			}
+
 
 		};
+
+		this.worldMap = this.createWorldMap(settings.seed);
 
 	};
 

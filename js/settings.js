@@ -33,7 +33,9 @@ var gameSettings = {
 
 	font_hud: "18px sans-serif",
 	font_title: "40px sans-serif",
-	font_default: "18px sans-serif"
+	font_default: "18px sans-serif",
+
+	planet_area_edge_tolerance: 10
 
 	//font_hud: "18px 'ubuntu mono'",
 	//font_title: "40px 'ubuntu mono'",

@@ -126,7 +126,6 @@
 		game.GALAXY.positions = {};
 		game.GALAXY.randomSeed = Math.random();
 		game.GALAXY.debugMode = false;
-		Math.seedrandom(game.GALAXY.randomSeed);
 		generateGalaxy(game);
 	};
 
@@ -145,6 +144,7 @@
 	};
 
 	var generateGalaxy = function(_){
+		Math.seedrandom(_.GALAXY.randomSeed);
 		var a = 50; //length
 		var b = 0.6; //tightness
 		var points = 70; //resolution
@@ -491,9 +491,7 @@
 	var statePlanetLive = function(game, changeVars){
 		game.coq.entities.create(GameScreen, {
 			init: function(gameScreen){
-				game.coq.renderer.setWorldSize({x: 3200, y: 3200});
-				game.coq.renderer.setViewCenter({x: 400, y: 400});
-				game.coq.entities.create(GamePlanetLive, {}, function(s){gameScreen.screen = s;});
+				game.coq.entities.create(GamePlanetLive, changeVars, function(s){gameScreen.screen = s;});
 			},
 			HUD: [
 				{
