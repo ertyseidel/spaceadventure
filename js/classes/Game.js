@@ -7,7 +7,7 @@
 
 		this.toSave = ["positions", "randomSeed", "debugMode", "planetRotation"];
 
-		if(localStorage.length === 0){
+		if(!localStorage.planetRotation){
 			refreshGame(this);
 		} else{
 			loadGame(this);

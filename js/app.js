@@ -1,6 +1,6 @@
 window.addEventListener('load', function() {
 	game = new Game("canvas", "text", 800, 600, gameSettings);
-	//game.changeGameState("start screen");
+	game.changeGameState("start screen");
 	// game.changeGameState("planet live", {
 	// 	seed: Math.random(),
 	// 	ring: {
@@ -8,5 +8,5 @@ window.addEventListener('load', function() {
 	// 		r: 2
 	// 	}
 	// });
-	game.changeGameState("space ship");
+	//game.changeGameState("space ship");
 });
